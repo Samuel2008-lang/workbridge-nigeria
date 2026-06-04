@@ -50,8 +50,8 @@ function SplashScreen() {
         background: "linear-gradient(180deg, #0F4A32 0%, #2D9E6F 100%)",
       }}
     >
-      {/* Bridge emoji with pulse */}
-      <div className="animate-pulse text-7xl">🌉</div>
+      {/* Bridge emoji with gentle pulse */}
+      <div className="animate-pulse-gentle text-7xl">🌉</div>
 
       {/* Brand name */}
       <h1
