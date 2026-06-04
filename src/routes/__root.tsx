@@ -76,15 +76,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#1A6B4A" },
+      { title: "WorkBridge — Nigeria's job marketplace" },
+      { name: "description", content: "Connect with people who need work done, or earn money doing physical and digital jobs across Nigeria." },
+      { name: "author", content: "WorkBridge" },
+      { property: "og:title", content: "WorkBridge — Nigeria's job marketplace" },
+      { property: "og:description", content: "Find work. Earn money. From plumbing to data entry." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+
     ],
     links: [
       {
