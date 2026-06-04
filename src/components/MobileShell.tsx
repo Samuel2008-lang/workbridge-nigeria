@@ -9,10 +9,10 @@ export function MobileShell({ children }: { children: ReactNode }) {
       <nav className="fixed bottom-0 inset-x-0 z-40 mx-auto max-w-md border-t border-border bg-card/95 backdrop-blur">
         <ul className="grid grid-cols-4">
           {[
-            { to: "/", label: "Home", icon: Home },
-            { to: "/", label: "Browse", icon: Search },
-            { to: "/", label: "Jobs", icon: Briefcase },
-            { to: "/", label: "Profile", icon: User },
+            { to: "/home", label: "Home", icon: Home },
+            { to: "/home", label: "Browse", icon: Search },
+            { to: "/home", label: "Jobs", icon: Briefcase },
+            { to: "/home", label: "Profile", icon: User },
           ].map(({ to, label, icon: Icon }) => (
             <li key={label}>
               <Link
