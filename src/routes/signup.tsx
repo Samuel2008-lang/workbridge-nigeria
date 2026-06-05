@@ -63,15 +63,17 @@ function SignupScreen() {
     setLoading(true);
     const fullPhone = normalizePhone(phone);
     try {
-      const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
-      if (error) throw error;
-      toast.success("Verification code sent");
-      navigate({
-        to: "/verify-otp",
-        search: { phone: fullPhone, firstName, city, language, role },
-      });
+      // Store profile locally for the demo flow (SMS provider not enabled)
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "workbridge_profile",
+          JSON.stringify({ firstName, phone: fullPhone, city, language, role }),
+        );
+      }
+      toast.success("Account created");
+      navigate({ to: "/home" });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Could not send code";
+      const msg = err instanceof Error ? err.message : "Something went wrong";
       toast.error(msg);
     } finally {
       setLoading(false);
