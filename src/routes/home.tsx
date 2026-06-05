@@ -1,160 +1,210 @@
-import { createFileRoute } from "@tanstack/react-router";
-import {
-  Wrench,
-  Sparkles,
-  Keyboard,
-  Mic,
-  Search,
-  MapPin,
-  ArrowRight,
-} from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Star, Award, Briefcase, Wrench, Sparkles, Truck, PenLine, ChefHat, Leaf, ImageIcon } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
-import { JobCategoryCard } from "@/components/JobCategoryCard";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
     meta: [
-      { title: "WorkBridge — Find work. Earn money. Nigeria." },
-      {
-        name: "description",
-        content:
-          "WorkBridge connects Nigerians who need work done with people who want to earn — from plumbing to data entry.",
-      },
-      { property: "og:title", content: "WorkBridge — Nigeria's job marketplace" },
-      {
-        property: "og:description",
-        content: "Post physical or digital jobs and get matched fast.",
-      },
+      { title: "Home — WorkBridge" },
+      { name: "description", content: "Find jobs near you and grow your earnings on WorkBridge." },
     ],
   }),
-  component: HomePage,
+  component: HomeScreen,
 });
 
-function HomePage() {
+const CATEGORIES = [
+  { label: "Digital", emoji: "🖼️", icon: ImageIcon, tint: "bg-blue-100 text-blue-700" },
+  { label: "Trades", emoji: "🔧", icon: Wrench, tint: "bg-amber-100 text-amber-700" },
+  { label: "Cleaning", emoji: "🧹", icon: Sparkles, tint: "bg-emerald-100 text-emerald-700" },
+  { label: "Delivery", emoji: "🚚", icon: Truck, tint: "bg-orange-100 text-orange-700" },
+  { label: "Writing", emoji: "📝", icon: PenLine, tint: "bg-purple-100 text-purple-700" },
+  { label: "Cooking", emoji: "🍳", icon: ChefHat, tint: "bg-rose-100 text-rose-700" },
+  { label: "Gardening", emoji: "🌿", icon: Leaf, tint: "bg-lime-100 text-lime-700" },
+];
+
+const JOBS = [
+  {
+    id: "1",
+    title: "Fix leaking kitchen sink",
+    client: "Mrs. Adeyemi",
+    rating: 4.8,
+    pay: 8500,
+    eta: "~2 hrs",
+    type: "Physical",
+    category: "Trades",
+    tint: "bg-amber-100 text-amber-700",
+    icon: Wrench,
+  },
+  {
+    id: "2",
+    title: "Transcribe 30-min interview audio",
+    client: "BrightMedia Ltd",
+    rating: 4.9,
+    pay: 5000,
+    eta: "~3 hrs",
+    type: "Digital",
+    category: "Writing",
+    tint: "bg-purple-100 text-purple-700",
+    icon: PenLine,
+  },
+  {
+    id: "3",
+    title: "Deep clean 2-bedroom apartment",
+    client: "Tunde O.",
+    rating: 4.7,
+    pay: 12000,
+    eta: "~4 hrs",
+    type: "Physical",
+    category: "Cleaning",
+    tint: "bg-emerald-100 text-emerald-700",
+    icon: Sparkles,
+  },
+  {
+    id: "4",
+    title: "Same-day package delivery to Ikeja",
+    client: "QuickShip NG",
+    rating: 4.6,
+    pay: 3500,
+    eta: "~1 hr",
+    type: "Physical",
+    category: "Delivery",
+    tint: "bg-orange-100 text-orange-700",
+    icon: Truck,
+  },
+];
+
+function formatNaira(n: number) {
+  return `₦${n.toLocaleString("en-NG")}`;
+}
+
+function HomeScreen() {
   return (
     <MobileShell>
-      <div className="mx-auto max-w-md">
-        {/* Header */}
-        <header className="px-5 pt-7 pb-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-muted-foreground">Good morning 👋</p>
-              <h1 className="mt-1 text-2xl font-bold tracking-tight">WorkBridge</h1>
-            </div>
-            <div className="flex items-center gap-1 rounded-full bg-card border border-border px-3 py-1.5 text-xs font-medium">
-              <MapPin className="h-3.5 w-3.5 text-primary" />
-              Lagos
-            </div>
+      {/* Gradient header */}
+      <header
+        className="px-5 pt-7 pb-24 text-white"
+        style={{ background: "linear-gradient(180deg, #0F4A32 0%, #1A6B4A 100%)" }}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-white/70">Good morning 👋</p>
+            <h1 className="text-2xl font-bold mt-0.5">Amara</h1>
           </div>
-
-          {/* Search */}
-          <div className="mt-5 flex items-center gap-2 rounded-2xl bg-card border border-border px-4 py-3 shadow-sm">
-            <Search className="h-5 w-5 text-muted-foreground" />
-            <input
-              type="search"
-              placeholder="Search plumbing, data entry..."
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-            />
+          <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold border border-white/30">
+            A
           </div>
-        </header>
+        </div>
 
-        {/* Hero CTA */}
-        <section className="px-5">
-          <div className="relative overflow-hidden rounded-2xl bg-primary p-5 text-primary-foreground shadow-md">
-            <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-accent/30" />
-            <div className="absolute -right-2 bottom-0 h-16 w-16 rounded-full bg-accent/20" />
-            <div className="relative">
-              <p className="text-xs font-medium uppercase tracking-wider text-accent">
-                Get started
-              </p>
-              <h2 className="mt-2 text-xl font-bold leading-tight">
-                Post a job or start earning today
-              </h2>
-              <p className="mt-1 text-sm text-primary-foreground/80">
-                Match with trusted workers across Nigeria in minutes.
-              </p>
-              <div className="mt-4 flex gap-2">
-                <button className="flex items-center gap-1 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground">
-                  Post a job <ArrowRight className="h-4 w-4" />
-                </button>
-                <button className="rounded-full border border-primary-foreground/30 px-4 py-2 text-sm font-semibold">
-                  Find work
-                </button>
+        {/* Wallet card */}
+        <div className="mt-6 rounded-2xl border border-white/20 bg-white/10 backdrop-blur p-5 shadow-lg">
+          <p className="text-[11px] tracking-widest text-white/70 font-medium">WALLET BALANCE</p>
+          <p className="text-3xl font-bold mt-1">{formatNaira(12500)}</p>
+          <div className="flex gap-2 mt-4">
+            <button className="flex-1 h-10 rounded-xl bg-[#F5A623] text-foreground text-sm font-semibold active:scale-[0.98] transition-transform">
+              Withdraw
+            </button>
+            <button className="flex-1 h-10 rounded-xl border border-white/60 text-white text-sm font-semibold active:scale-[0.98] transition-transform">
+              History
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Stats row — overlapping the header */}
+      <section className="px-5 -mt-14">
+        <div className="grid grid-cols-3 gap-3">
+          <StatCard icon={<Briefcase className="h-4 w-4 text-primary" />} value="24" label="Jobs Done" />
+          <StatCard
+            icon={<Star className="h-4 w-4 text-accent" fill="currentColor" />}
+            value="4.8"
+            label="Rating"
+          />
+          <StatCard
+            icon={<Award className="h-4 w-4 text-primary" />}
+            value="Silver"
+            label="Level"
+          />
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="mt-6">
+        <h2 className="px-5 text-base font-bold text-foreground mb-3">Categories</h2>
+        <div className="flex gap-3 overflow-x-auto px-5 pb-2 scrollbar-none">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c.label}
+              className="flex-shrink-0 flex flex-col items-center gap-2 w-20"
+            >
+              <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center text-2xl", c.tint)}>
+                {c.emoji}
               </div>
-            </div>
-          </div>
-        </section>
+              <span className="text-xs font-medium text-foreground">{c.label}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
-        {/* Categories */}
-        <section className="px-5 pt-7">
-          <div className="mb-3 flex items-end justify-between">
-            <h3 className="text-base font-semibold">Categories</h3>
-            <button className="text-xs font-medium text-primary">See all</button>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <JobCategoryCard icon={Wrench} title="Plumbing" count="124" />
-            <JobCategoryCard icon={Sparkles} title="Cleaning" count="86" tone="accent" />
-            <JobCategoryCard icon={Keyboard} title="Data Entry" count="212" tone="accent" />
-            <JobCategoryCard icon={Mic} title="Transcription" count="58" />
-          </div>
-        </section>
-
-        {/* Featured jobs */}
-        <section className="px-5 pt-7">
-          <div className="mb-3 flex items-end justify-between">
-            <h3 className="text-base font-semibold">Featured jobs</h3>
-            <button className="text-xs font-medium text-primary">View all</button>
-          </div>
-          <ul className="space-y-3">
-            {[
-              {
-                title: "Fix kitchen sink leak",
-                meta: "Ikeja • Today",
-                pay: "₦8,000",
-                tag: "Physical",
-              },
-              {
-                title: "Transcribe 30 min audio",
-                meta: "Remote • 2 days",
-                pay: "₦12,500",
-                tag: "Digital",
-              },
-              {
-                title: "Deep clean 2-bedroom flat",
-                meta: "Lekki • Sat",
-                pay: "₦20,000",
-                tag: "Physical",
-              },
-            ].map((job) => (
-              <li
-                key={job.title}
-                className="rounded-2xl bg-card border border-border/60 p-4 shadow-sm"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                        job.tag === "Digital"
-                          ? "bg-accent-soft text-accent-foreground"
-                          : "bg-primary-soft text-primary"
-                      }`}
-                    >
-                      {job.tag}
-                    </span>
-                    <p className="mt-1.5 font-semibold text-sm leading-snug">
-                      {job.title}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">{job.meta}</p>
-                  </div>
-                  <p className="text-sm font-bold text-primary whitespace-nowrap">
-                    {job.pay}
-                  </p>
+      {/* Job feed */}
+      <section className="mt-6 px-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-foreground">Jobs near you</h2>
+          <button className="text-xs font-semibold text-primary">See all</button>
+        </div>
+        <div className="space-y-3">
+          {JOBS.map((job) => (
+            <Link
+              key={job.id}
+              to="/home"
+              className="block rounded-2xl border border-border bg-card p-4 shadow-sm active:scale-[0.99] transition-transform"
+            >
+              <div className="flex gap-3">
+                <div className={cn("h-12 w-12 flex-shrink-0 rounded-xl flex items-center justify-center", job.tint)}>
+                  <job.icon className="h-6 w-6" />
                 </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-bold text-foreground text-sm leading-tight">{job.title}</p>
+                    <p className="text-primary font-bold text-sm whitespace-nowrap">{formatNaira(job.pay)}</p>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <span>{job.client}</span>
+                      <span>·</span>
+                      <Star className="h-3 w-3 text-accent" fill="currentColor" />
+                      <span>{job.rating}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{job.eta}</p>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <Tag>{job.type}</Tag>
+                    <Tag>{job.category}</Tag>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
     </MobileShell>
+  );
+}
+
+function StatCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
+  return (
+    <div className="rounded-2xl bg-card border border-border p-3 shadow-sm">
+      <div className="flex items-center gap-1.5">{icon}</div>
+      <p className="text-lg font-bold text-foreground mt-1 leading-none">{value}</p>
+      <p className="text-[11px] text-muted-foreground mt-1">{label}</p>
+    </div>
+  );
+}
+
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-muted text-[10px] font-semibold text-muted-foreground">
+      {children}
+    </span>
   );
 }
