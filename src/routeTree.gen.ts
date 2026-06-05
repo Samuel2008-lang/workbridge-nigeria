@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RoleSelectRouteImport } from './routes/role-select'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
@@ -18,6 +20,16 @@ import { Route as IndexRouteImport } from './routes/index'
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyOtpRoute = VerifyOtpRouteImport.update({
+  id: '/verify-otp',
+  path: '/verify-otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RoleSelectRoute = RoleSelectRouteImport.update({
@@ -46,6 +58,8 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/role-select': typeof RoleSelectRoute
+  '/signup': typeof SignupRoute
+  '/verify-otp': typeof VerifyOtpRoute
   '/welcome': typeof WelcomeRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +67,8 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/role-select': typeof RoleSelectRoute
+  '/signup': typeof SignupRoute
+  '/verify-otp': typeof VerifyOtpRoute
   '/welcome': typeof WelcomeRoute
 }
 export interface FileRoutesById {
@@ -61,14 +77,38 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/role-select': typeof RoleSelectRoute
+  '/signup': typeof SignupRoute
+  '/verify-otp': typeof VerifyOtpRoute
   '/welcome': typeof WelcomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/login' | '/role-select' | '/welcome'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/login'
+    | '/role-select'
+    | '/signup'
+    | '/verify-otp'
+    | '/welcome'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/login' | '/role-select' | '/welcome'
-  id: '__root__' | '/' | '/home' | '/login' | '/role-select' | '/welcome'
+  to:
+    | '/'
+    | '/home'
+    | '/login'
+    | '/role-select'
+    | '/signup'
+    | '/verify-otp'
+    | '/welcome'
+  id:
+    | '__root__'
+    | '/'
+    | '/home'
+    | '/login'
+    | '/role-select'
+    | '/signup'
+    | '/verify-otp'
+    | '/welcome'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +116,8 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   RoleSelectRoute: typeof RoleSelectRoute
+  SignupRoute: typeof SignupRoute
+  VerifyOtpRoute: typeof VerifyOtpRoute
   WelcomeRoute: typeof WelcomeRoute
 }
 
@@ -86,6 +128,20 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-otp': {
+      id: '/verify-otp'
+      path: '/verify-otp'
+      fullPath: '/verify-otp'
+      preLoaderRoute: typeof VerifyOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/role-select': {
@@ -124,6 +180,8 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   RoleSelectRoute: RoleSelectRoute,
+  SignupRoute: SignupRoute,
+  VerifyOtpRoute: VerifyOtpRoute,
   WelcomeRoute: WelcomeRoute,
 }
 export const routeTree = rootRouteImport
