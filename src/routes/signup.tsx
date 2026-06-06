@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
       { title: "Create your account — WorkBridge" },
-      { name: "description", content: "Sign up for WorkBridge with your phone number." },
+      { name: "description", content: "Sign up for WorkBridge." },
     ],
   }),
   component: SignupScreen,
@@ -31,26 +31,24 @@ export const Route = createFileRoute("/signup")({
 
 const LANGUAGES = ["English", "Yoruba", "Igbo", "Hausa", "Pidgin"];
 
-function normalizePhone(raw: string): string {
-  // Nigeria: convert 0XXXXXXXXXX -> +234XXXXXXXXXX
-  const digits = raw.replace(/\D/g, "");
-  if (digits.startsWith("234")) return `+${digits}`;
-  if (digits.startsWith("0")) return `+234${digits.slice(1)}`;
-  if (raw.startsWith("+")) return `+${digits}`;
-  return `+234${digits}`;
-}
-
 function SignupScreen() {
   const navigate = useNavigate();
   const { role } = Route.useSearch();
 
   const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
 
-  const canSubmit = firstName.trim() && phone.trim().length >= 10 && city.trim();
+  const canSubmit =
+    firstName.trim() &&
+    /^\S+@\S+\.\S+$/.test(email) &&
+    password.length >= 6 &&
+    city.trim();
 
   const inputClass = cn(
     "w-full h-14 rounded-2xl border-2 border-border bg-card px-4 text-base text-foreground",
@@ -61,13 +59,21 @@ function SignupScreen() {
   const handleContinue = async () => {
     if (!canSubmit || loading) return;
     setLoading(true);
-    const fullPhone = normalizePhone(phone);
     try {
-      // Store profile locally for the demo flow (SMS provider not enabled)
+      const { error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/home`,
+          data: { first_name: firstName, phone, city, language, role },
+        },
+      });
+      if (error) throw error;
+
       if (typeof window !== "undefined") {
         localStorage.setItem(
           "workbridge_profile",
-          JSON.stringify({ firstName, phone: fullPhone, city, language, role }),
+          JSON.stringify({ firstName, email, phone, city, language, role }),
         );
       }
       toast.success("Account created");
@@ -91,7 +97,7 @@ function SignupScreen() {
 
       <h1 className="text-3xl font-bold text-foreground mb-2">Create your account</h1>
       <p className="text-base text-muted-foreground mb-8">
-        Just your phone number — nothing complicated
+        A few quick details to get you started
       </p>
 
       <div className="flex-1 space-y-4">
@@ -107,7 +113,40 @@ function SignupScreen() {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-foreground mb-2 block">Phone number</label>
+          <label className="text-sm font-medium text-foreground mb-2 block">Email address</label>
+          <input
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className={inputClass}
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-foreground mb-2 block">Password</label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="At least 6 characters"
+              className={cn(inputClass, "pr-12")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+            >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-foreground mb-2 block">Phone number (optional)</label>
           <input
             type="tel"
             inputMode="numeric"
@@ -157,10 +196,16 @@ function SignupScreen() {
           disabled={!canSubmit || loading}
           className="w-full h-14 rounded-2xl text-base font-semibold"
         >
-          {loading ? "Sending code..." : "Continue"}
+          {loading ? "Creating account..." : "Create account"}
         </Button>
         <p className="text-xs text-muted-foreground text-center">
           By continuing you agree to our Terms and Privacy Policy
+        </p>
+        <p className="text-sm text-center text-muted-foreground">
+          Already have an account?{" "}
+          <Link to="/login" className="font-semibold text-primary">
+            Log in
+          </Link>
         </p>
       </div>
     </div>
