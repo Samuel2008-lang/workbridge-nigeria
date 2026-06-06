@@ -123,6 +123,9 @@ function SignupScreen() {
             placeholder="e.g. Amara"
             className={inputClass}
           />
+          {showErrors && firstNameError && (
+            <p className="mt-1.5 text-xs text-destructive">{firstNameError}</p>
+          )}
         </div>
 
         <div>
@@ -135,6 +138,9 @@ function SignupScreen() {
             placeholder="you@example.com"
             className={inputClass}
           />
+          {showErrors && emailError && (
+            <p className="mt-1.5 text-xs text-destructive">{emailError}</p>
+          )}
         </div>
 
         <div>
@@ -145,7 +151,7 @@ function SignupScreen() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
+              placeholder="At least 8 characters, with a letter and number"
               className={cn(inputClass, "pr-12")}
             />
             <button
@@ -156,6 +162,15 @@ function SignupScreen() {
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
+          {(showErrors || password.length > 0) && passwordErrors.length > 0 && (
+            <ul className="mt-1.5 space-y-0.5">
+              {passwordErrors.map((err) => (
+                <li key={err} className="text-xs text-destructive">
+                  • {err}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div>
@@ -179,6 +194,9 @@ function SignupScreen() {
             placeholder="e.g. Lagos, Abuja, Port Harcourt"
             className={inputClass}
           />
+          {showErrors && cityError && (
+            <p className="mt-1.5 text-xs text-destructive">{cityError}</p>
+          )}
         </div>
 
         <div>
