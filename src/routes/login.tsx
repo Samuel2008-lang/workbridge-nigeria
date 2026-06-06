@@ -76,6 +76,9 @@ function LoginScreen() {
               placeholder="you@example.com"
               className="mt-1.5 w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
             />
+            {showErrors && emailError && (
+              <p className="mt-1.5 text-xs text-destructive">{emailError}</p>
+            )}
           </div>
 
           <div>
@@ -97,6 +100,9 @@ function LoginScreen() {
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
+            {showErrors && passwordError && (
+              <p className="mt-1.5 text-xs text-destructive">{passwordError}</p>
+            )}
           </div>
 
           <button
