@@ -224,7 +224,7 @@ function SignupScreen() {
       <div className="mt-6 space-y-3">
         <Button
           onClick={handleContinue}
-          disabled={!canSubmit || loading}
+          disabled={loading}
           className="w-full h-14 rounded-2xl text-base font-semibold"
         >
           {loading ? "Creating account..." : "Create account"}
