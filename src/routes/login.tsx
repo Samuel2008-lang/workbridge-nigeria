@@ -21,10 +21,20 @@ function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const emailError = !email
+    ? "Email is required"
+    : !/^\S+@\S+\.\S+$/.test(email)
+      ? "Enter a valid email address"
+      : "";
+  const passwordError = !password ? "Password is required" : "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowErrors(true);
     if (loading) return;
+    if (emailError || passwordError) return;
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({
