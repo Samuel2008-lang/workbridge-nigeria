@@ -43,12 +43,24 @@ function SignupScreen() {
   const [city, setCity] = useState("");
   const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const emailError = !email
+    ? "Email is required"
+    : !/^\S+@\S+\.\S+$/.test(email)
+      ? "Enter a valid email address"
+      : "";
+
+  const passwordErrors: string[] = [];
+  if (password.length < 8) passwordErrors.push("At least 8 characters");
+  if (!/[A-Za-z]/.test(password)) passwordErrors.push("Include a letter");
+  if (!/[0-9]/.test(password)) passwordErrors.push("Include a number");
+
+  const firstNameError = !firstName.trim() ? "First name is required" : "";
+  const cityError = !city.trim() ? "City is required" : "";
 
   const canSubmit =
-    firstName.trim() &&
-    /^\S+@\S+\.\S+$/.test(email) &&
-    password.length >= 6 &&
-    city.trim();
+    !firstNameError && !emailError && passwordErrors.length === 0 && !cityError;
 
   const inputClass = cn(
     "w-full h-14 rounded-2xl border-2 border-border bg-card px-4 text-base text-foreground",
@@ -57,6 +69,7 @@ function SignupScreen() {
   );
 
   const handleContinue = async () => {
+    setShowErrors(true);
     if (!canSubmit || loading) return;
     setLoading(true);
     try {
@@ -110,6 +123,9 @@ function SignupScreen() {
             placeholder="e.g. Amara"
             className={inputClass}
           />
+          {showErrors && firstNameError && (
+            <p className="mt-1.5 text-xs text-destructive">{firstNameError}</p>
+          )}
         </div>
 
         <div>
@@ -122,6 +138,9 @@ function SignupScreen() {
             placeholder="you@example.com"
             className={inputClass}
           />
+          {showErrors && emailError && (
+            <p className="mt-1.5 text-xs text-destructive">{emailError}</p>
+          )}
         </div>
 
         <div>
@@ -132,7 +151,7 @@ function SignupScreen() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
+              placeholder="At least 8 characters, with a letter and number"
               className={cn(inputClass, "pr-12")}
             />
             <button
@@ -143,6 +162,15 @@ function SignupScreen() {
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
+          {(showErrors || password.length > 0) && passwordErrors.length > 0 && (
+            <ul className="mt-1.5 space-y-0.5">
+              {passwordErrors.map((err) => (
+                <li key={err} className="text-xs text-destructive">
+                  • {err}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div>
@@ -166,6 +194,9 @@ function SignupScreen() {
             placeholder="e.g. Lagos, Abuja, Port Harcourt"
             className={inputClass}
           />
+          {showErrors && cityError && (
+            <p className="mt-1.5 text-xs text-destructive">{cityError}</p>
+          )}
         </div>
 
         <div>
@@ -193,7 +224,7 @@ function SignupScreen() {
       <div className="mt-6 space-y-3">
         <Button
           onClick={handleContinue}
-          disabled={!canSubmit || loading}
+          disabled={loading}
           className="w-full h-14 rounded-2xl text-base font-semibold"
         >
           {loading ? "Creating account..." : "Create account"}
