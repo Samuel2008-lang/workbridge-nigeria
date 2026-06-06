@@ -43,12 +43,24 @@ function SignupScreen() {
   const [city, setCity] = useState("");
   const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const emailError = !email
+    ? "Email is required"
+    : !/^\S+@\S+\.\S+$/.test(email)
+      ? "Enter a valid email address"
+      : "";
+
+  const passwordErrors: string[] = [];
+  if (password.length < 8) passwordErrors.push("At least 8 characters");
+  if (!/[A-Za-z]/.test(password)) passwordErrors.push("Include a letter");
+  if (!/[0-9]/.test(password)) passwordErrors.push("Include a number");
+
+  const firstNameError = !firstName.trim() ? "First name is required" : "";
+  const cityError = !city.trim() ? "City is required" : "";
 
   const canSubmit =
-    firstName.trim() &&
-    /^\S+@\S+\.\S+$/.test(email) &&
-    password.length >= 6 &&
-    city.trim();
+    !firstNameError && !emailError && passwordErrors.length === 0 && !cityError;
 
   const inputClass = cn(
     "w-full h-14 rounded-2xl border-2 border-border bg-card px-4 text-base text-foreground",
