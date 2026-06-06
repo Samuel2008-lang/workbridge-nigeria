@@ -69,6 +69,7 @@ function SignupScreen() {
   );
 
   const handleContinue = async () => {
+    setShowErrors(true);
     if (!canSubmit || loading) return;
     setLoading(true);
     try {
