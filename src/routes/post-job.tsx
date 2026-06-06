@@ -161,10 +161,8 @@ function PostJobScreen() {
               className="absolute inset-0"
               style={{
                 backgroundImage:
-                  "linear-gradient(135deg, #e8efe9 0%, #d4e1d8 100%)",
-                backgroundSize: "20px 20px",
-                backgroundImage:
                   "linear-gradient(#d4e1d8 1px, transparent 1px), linear-gradient(90deg, #d4e1d8 1px, transparent 1px)",
+                backgroundSize: "20px 20px",
               }}
             />
             <div className="absolute inset-0 flex items-center justify-center">
