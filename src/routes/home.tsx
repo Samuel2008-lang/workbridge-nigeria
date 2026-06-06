@@ -101,12 +101,18 @@ function HomeScreen() {
           <p className="text-[11px] tracking-widest text-white/70 font-medium">WALLET BALANCE</p>
           <p className="text-3xl font-bold mt-1">{formatNaira(12500)}</p>
           <div className="flex gap-2 mt-4">
-            <button className="flex-1 h-10 rounded-xl bg-[#F5A623] text-foreground text-sm font-semibold active:scale-[0.98] transition-transform">
+            <Link
+              to="/wallet"
+              className="flex-1 h-10 rounded-xl bg-[#F5A623] text-foreground text-sm font-semibold flex items-center justify-center active:scale-[0.98] transition-transform"
+            >
               Withdraw
-            </button>
-            <button className="flex-1 h-10 rounded-xl border border-white/60 text-white text-sm font-semibold active:scale-[0.98] transition-transform">
+            </Link>
+            <Link
+              to="/wallet"
+              className="flex-1 h-10 rounded-xl border border-white/60 text-white text-sm font-semibold flex items-center justify-center active:scale-[0.98] transition-transform"
+            >
               History
-            </button>
+            </Link>
           </div>
         </div>
       </header>
