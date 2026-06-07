@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Star, Award, Briefcase, Wrench, Sparkles, Truck, PenLine, ChefHat, Leaf, ImageIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/home")({
