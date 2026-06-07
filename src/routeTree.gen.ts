@@ -13,6 +13,7 @@ import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as RoleSelectRouteImport } from './routes/role-select'
 import { Route as PostJobRouteImport } from './routes/post-job'
 import { Route as LoginRouteImport } from './routes/login'
@@ -37,6 +38,11 @@ const VerifyOtpRoute = VerifyOtpRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RoleSelectRoute = RoleSelectRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/post-job': typeof PostJobRoute
   '/role-select': typeof RoleSelectRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/post-job': typeof PostJobRoute
   '/role-select': typeof RoleSelectRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/post-job': typeof PostJobRoute
   '/role-select': typeof RoleSelectRoute
+  '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/post-job'
     | '/role-select'
+    | '/search'
     | '/signup'
     | '/verify-otp'
     | '/wallet'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/post-job'
     | '/role-select'
+    | '/search'
     | '/signup'
     | '/verify-otp'
     | '/wallet'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/post-job'
     | '/role-select'
+    | '/search'
     | '/signup'
     | '/verify-otp'
     | '/wallet'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PostJobRoute: typeof PostJobRoute
   RoleSelectRoute: typeof RoleSelectRoute
+  SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
   WalletRoute: typeof WalletRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/role-select': {
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PostJobRoute: PostJobRoute,
   RoleSelectRoute: RoleSelectRoute,
+  SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
   VerifyOtpRoute: VerifyOtpRoute,
   WalletRoute: WalletRoute,
@@ -229,3 +250,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
