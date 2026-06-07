@@ -147,15 +147,19 @@ function HomeScreen() {
       {/* Stats row — overlapping the header */}
       <section className="px-5 -mt-14">
         <div className="grid grid-cols-3 gap-3">
-          <StatCard icon={<Briefcase className="h-4 w-4 text-primary" />} value="24" label="Jobs Done" />
+          <StatCard
+            icon={<Briefcase className="h-4 w-4 text-primary" />}
+            value={String(jobsDone)}
+            label="Jobs Done"
+          />
           <StatCard
             icon={<Star className="h-4 w-4 text-accent" fill="currentColor" />}
-            value="4.8"
+            value={rating != null ? String(rating) : "—"}
             label="Rating"
           />
           <StatCard
             icon={<Award className="h-4 w-4 text-primary" />}
-            value="Silver"
+            value={jobsDone >= 20 ? "Gold" : jobsDone >= 5 ? "Silver" : "Starter"}
             label="Level"
           />
         </div>
@@ -183,41 +187,55 @@ function HomeScreen() {
       <section className="mt-6 px-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-bold text-foreground">Jobs near you</h2>
-          <button className="text-xs font-semibold text-primary">See all</button>
+          <Link to="/search" className="text-xs font-semibold text-primary">
+            See all
+          </Link>
         </div>
         <div className="space-y-3">
-          {JOBS.map((job) => (
-            <Link
-              key={job.id}
-              to="/home"
-              className="block rounded-2xl border border-border bg-card p-4 shadow-sm active:scale-[0.99] transition-transform"
-            >
-              <div className="flex gap-3">
-                <div className={cn("h-12 w-12 flex-shrink-0 rounded-xl flex items-center justify-center", job.tint)}>
-                  <job.icon className="h-6 w-6" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold text-foreground text-sm leading-tight">{job.title}</p>
-                    <p className="text-primary font-bold text-sm whitespace-nowrap">{formatNaira(job.pay)}</p>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <span>{job.client}</span>
-                      <span>·</span>
-                      <Star className="h-3 w-3 text-accent" fill="currentColor" />
-                      <span>{job.rating}</span>
+          {loadingJobs ? (
+            <p className="text-center text-sm text-muted-foreground py-6">Loading jobs…</p>
+          ) : jobs.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground py-6">
+              No open jobs yet. Check back soon!
+            </p>
+          ) : (
+            jobs.map((job) => {
+              const { Icon, tint } = pickJobIcon(job.type);
+              return (
+                <Link
+                  key={job.id}
+                  to="/jobs/$jobId"
+                  params={{ jobId: job.id }}
+                  className="block rounded-2xl border border-border bg-card p-4 shadow-sm active:scale-[0.99] transition-transform"
+                >
+                  <div className="flex gap-3">
+                    <div className={cn("h-12 w-12 flex-shrink-0 rounded-xl flex items-center justify-center", tint)}>
+                      <Icon className="h-6 w-6" />
                     </div>
-                    <p className="text-xs text-muted-foreground">{job.eta}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-bold text-foreground text-sm leading-tight">{job.title}</p>
+                        <p className="text-primary font-bold text-sm whitespace-nowrap">
+                          {formatNaira(job.budget_max ?? job.budget_min)}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-xs text-muted-foreground truncate">
+                          {job.location ?? "Remote"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(job.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <Tag>{job.type === "digital" ? "Digital" : "Physical"}</Tag>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2 mt-3">
-                    <Tag>{job.type}</Tag>
-                    <Tag>{job.category}</Tag>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+                </Link>
+              );
+            })
+          )}
         </div>
       </section>
     </MobileShell>
