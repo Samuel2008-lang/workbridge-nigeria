@@ -14,7 +14,245 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          proposed_price: number | null
+          status: Database["public"]["Enums"]["application_status"]
+          updated_at: string
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          proposed_price?: number | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          proposed_price?: number | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          budget_max: number | null
+          budget_min: number | null
+          client_id: string
+          created_at: string
+          description: string | null
+          id: string
+          latitude: number | null
+          location: string | null
+          longitude: number | null
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          type: Database["public"]["Enums"]["job_type"]
+          updated_at: string
+        }
+        Insert: {
+          budget_max?: number | null
+          budget_min?: number | null
+          client_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title: string
+          type: Database["public"]["Enums"]["job_type"]
+          updated_at?: string
+        }
+        Update: {
+          budget_max?: number | null
+          budget_min?: number | null
+          client_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          location?: string | null
+          longitude?: number | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["job_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean
+          job_id: string | null
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          job_id?: string | null
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          job_id?: string | null
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          language: string | null
+          location: string | null
+          phone_number: string | null
+          profile_photo: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          language?: string | null
+          location?: string | null
+          phone_number?: string | null
+          profile_photo?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          language?: string | null
+          location?: string | null
+          phone_number?: string | null
+          profile_photo?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ratings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          job_id: string
+          rated_user_id: string
+          rater_id: string
+          stars: number
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          rated_user_id: string
+          rater_id: string
+          stars: number
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          rated_user_id?: string
+          rater_id?: string
+          stars?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ratings_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          job_id: string | null
+          receiver_id: string | null
+          sender_id: string | null
+          status: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          job_id?: string | null
+          receiver_id?: string | null
+          sender_id?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type?: Database["public"]["Enums"]["transaction_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +261,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      application_status: "pending" | "accepted" | "rejected"
+      job_status: "open" | "assigned" | "completed" | "cancelled"
+      job_type: "digital" | "physical"
+      transaction_status: "pending" | "completed" | "failed"
+      transaction_type: "escrow" | "release" | "withdrawal" | "deposit"
+      user_role: "worker" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +393,13 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      application_status: ["pending", "accepted", "rejected"],
+      job_status: ["open", "assigned", "completed", "cancelled"],
+      job_type: ["digital", "physical"],
+      transaction_status: ["pending", "completed", "failed"],
+      transaction_type: ["escrow", "release", "withdrawal", "deposit"],
+      user_role: ["worker", "client"],
+    },
   },
 } as const
