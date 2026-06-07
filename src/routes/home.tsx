@@ -48,25 +48,55 @@ function pickJobIcon(type: "digital" | "physical") {
 
 function HomeScreen() {
   const [firstName, setFirstName] = useState<string>("there");
+  const [jobs, setJobs] = useState<JobRow[]>([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
+  const [jobsDone, setJobsDone] = useState(0);
+  const [rating, setRating] = useState<number | null>(null);
 
   useEffect(() => {
     let active = true;
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
+
+      // Public job feed: load even when not signed in
+      const { data: jobRows } = await supabase
+        .from("jobs")
+        .select("id, title, type, location, budget_min, budget_max, created_at")
+        .eq("status", "open")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (active) {
+        setJobs((jobRows ?? []) as JobRow[]);
+        setLoadingJobs(false);
+      }
+
       if (!user || !active) return;
       const metaName =
         (user.user_metadata?.first_name as string | undefined) ??
         (user.user_metadata?.full_name as string | undefined);
-      if (metaName) {
-        setFirstName(metaName.split(" ")[0]);
-      }
+      if (metaName) setFirstName(metaName.split(" ")[0]);
+
       const { data: profile } = await supabase
         .from("profiles")
         .select("full_name")
         .eq("id", user.id)
         .maybeSingle();
-      if (active && profile?.full_name) {
-        setFirstName(profile.full_name.split(" ")[0]);
+      if (active && profile?.full_name) setFirstName(profile.full_name.split(" ")[0]);
+
+      const { count } = await supabase
+        .from("applications")
+        .select("id", { count: "exact", head: true })
+        .eq("worker_id", user.id)
+        .eq("status", "accepted");
+      if (active) setJobsDone(count ?? 0);
+
+      const { data: ratings } = await supabase
+        .from("ratings")
+        .select("stars")
+        .eq("rated_user_id", user.id);
+      if (active && ratings && ratings.length > 0) {
+        const avg = ratings.reduce((s, r) => s + (r.stars ?? 0), 0) / ratings.length;
+        setRating(Number(avg.toFixed(1)));
       }
     })();
     return () => {
