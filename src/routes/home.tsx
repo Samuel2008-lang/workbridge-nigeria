@@ -81,6 +81,35 @@ function formatNaira(n: number) {
 }
 
 function HomeScreen() {
+  const [firstName, setFirstName] = useState<string>("there");
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !active) return;
+      const metaName =
+        (user.user_metadata?.first_name as string | undefined) ??
+        (user.user_metadata?.full_name as string | undefined);
+      if (metaName) {
+        setFirstName(metaName.split(" ")[0]);
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (active && profile?.full_name) {
+        setFirstName(profile.full_name.split(" ")[0]);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const initial = firstName.charAt(0).toUpperCase() || "?";
+
   return (
     <MobileShell>
       {/* Gradient header */}
@@ -91,10 +120,10 @@ function HomeScreen() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-white/70">Good morning 👋</p>
-            <h1 className="text-2xl font-bold mt-0.5">Amara</h1>
+            <h1 className="text-2xl font-bold mt-0.5">{firstName}</h1>
           </div>
           <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold border border-white/30">
-            A
+            {initial}
           </div>
         </div>
 
