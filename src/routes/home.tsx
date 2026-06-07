@@ -25,59 +25,25 @@ const CATEGORIES = [
   { label: "Gardening", emoji: "🌿", icon: Leaf, tint: "bg-lime-100 text-lime-700" },
 ];
 
-const JOBS = [
-  {
-    id: "1",
-    title: "Fix leaking kitchen sink",
-    client: "Mrs. Adeyemi",
-    rating: 4.8,
-    pay: 8500,
-    eta: "~2 hrs",
-    type: "Physical",
-    category: "Trades",
-    tint: "bg-amber-100 text-amber-700",
-    icon: Wrench,
-  },
-  {
-    id: "2",
-    title: "Transcribe 30-min interview audio",
-    client: "BrightMedia Ltd",
-    rating: 4.9,
-    pay: 5000,
-    eta: "~3 hrs",
-    type: "Digital",
-    category: "Writing",
-    tint: "bg-purple-100 text-purple-700",
-    icon: PenLine,
-  },
-  {
-    id: "3",
-    title: "Deep clean 2-bedroom apartment",
-    client: "Tunde O.",
-    rating: 4.7,
-    pay: 12000,
-    eta: "~4 hrs",
-    type: "Physical",
-    category: "Cleaning",
-    tint: "bg-emerald-100 text-emerald-700",
-    icon: Sparkles,
-  },
-  {
-    id: "4",
-    title: "Same-day package delivery to Ikeja",
-    client: "QuickShip NG",
-    rating: 4.6,
-    pay: 3500,
-    eta: "~1 hr",
-    type: "Physical",
-    category: "Delivery",
-    tint: "bg-orange-100 text-orange-700",
-    icon: Truck,
-  },
-];
+type JobRow = {
+  id: string;
+  title: string;
+  type: "digital" | "physical";
+  location: string | null;
+  budget_min: number | null;
+  budget_max: number | null;
+  created_at: string;
+};
 
-function formatNaira(n: number) {
-  return `₦${n.toLocaleString("en-NG")}`;
+function formatNaira(n: number | null | undefined) {
+  if (n == null) return "—";
+  return `₦${Number(n).toLocaleString("en-NG")}`;
+}
+
+function pickJobIcon(type: "digital" | "physical") {
+  return type === "digital"
+    ? { Icon: PenLine, tint: "bg-purple-100 text-purple-700" }
+    : { Icon: Wrench, tint: "bg-amber-100 text-amber-700" };
 }
 
 function HomeScreen() {
