@@ -25,82 +25,78 @@ const CATEGORIES = [
   { label: "Gardening", emoji: "🌿", icon: Leaf, tint: "bg-lime-100 text-lime-700" },
 ];
 
-const JOBS = [
-  {
-    id: "1",
-    title: "Fix leaking kitchen sink",
-    client: "Mrs. Adeyemi",
-    rating: 4.8,
-    pay: 8500,
-    eta: "~2 hrs",
-    type: "Physical",
-    category: "Trades",
-    tint: "bg-amber-100 text-amber-700",
-    icon: Wrench,
-  },
-  {
-    id: "2",
-    title: "Transcribe 30-min interview audio",
-    client: "BrightMedia Ltd",
-    rating: 4.9,
-    pay: 5000,
-    eta: "~3 hrs",
-    type: "Digital",
-    category: "Writing",
-    tint: "bg-purple-100 text-purple-700",
-    icon: PenLine,
-  },
-  {
-    id: "3",
-    title: "Deep clean 2-bedroom apartment",
-    client: "Tunde O.",
-    rating: 4.7,
-    pay: 12000,
-    eta: "~4 hrs",
-    type: "Physical",
-    category: "Cleaning",
-    tint: "bg-emerald-100 text-emerald-700",
-    icon: Sparkles,
-  },
-  {
-    id: "4",
-    title: "Same-day package delivery to Ikeja",
-    client: "QuickShip NG",
-    rating: 4.6,
-    pay: 3500,
-    eta: "~1 hr",
-    type: "Physical",
-    category: "Delivery",
-    tint: "bg-orange-100 text-orange-700",
-    icon: Truck,
-  },
-];
+type JobRow = {
+  id: string;
+  title: string;
+  type: "digital" | "physical";
+  location: string | null;
+  budget_min: number | null;
+  budget_max: number | null;
+  created_at: string;
+};
 
-function formatNaira(n: number) {
-  return `₦${n.toLocaleString("en-NG")}`;
+function formatNaira(n: number | null | undefined) {
+  if (n == null) return "—";
+  return `₦${Number(n).toLocaleString("en-NG")}`;
+}
+
+function pickJobIcon(type: "digital" | "physical") {
+  return type === "digital"
+    ? { Icon: PenLine, tint: "bg-purple-100 text-purple-700" }
+    : { Icon: Wrench, tint: "bg-amber-100 text-amber-700" };
 }
 
 function HomeScreen() {
   const [firstName, setFirstName] = useState<string>("there");
+  const [jobs, setJobs] = useState<JobRow[]>([]);
+  const [loadingJobs, setLoadingJobs] = useState(true);
+  const [jobsDone, setJobsDone] = useState(0);
+  const [rating, setRating] = useState<number | null>(null);
 
   useEffect(() => {
     let active = true;
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
+
+      // Public job feed: load even when not signed in
+      const { data: jobRows } = await supabase
+        .from("jobs")
+        .select("id, title, type, location, budget_min, budget_max, created_at")
+        .eq("status", "open")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (active) {
+        setJobs((jobRows ?? []) as JobRow[]);
+        setLoadingJobs(false);
+      }
+
       if (!user || !active) return;
       const metaName =
         (user.user_metadata?.first_name as string | undefined) ??
         (user.user_metadata?.full_name as string | undefined);
-      if (metaName) {
-        setFirstName(metaName.split(" ")[0]);
-      }
+      if (metaName) setFirstName(metaName.split(" ")[0]);
+
       const { data: profile } = await supabase
         .from("profiles")
         .select("full_name")
         .eq("id", user.id)
         .maybeSingle();
-      if (active && profile?.full_name) {
-        setFirstName(profile.full_name.split(" ")[0]);
+      if (active && profile?.full_name) setFirstName(profile.full_name.split(" ")[0]);
+
+      const { count } = await supabase
+        .from("applications")
+        .select("id", { count: "exact", head: true })
+        .eq("worker_id", user.id)
+        .eq("status", "accepted");
+      if (active) setJobsDone(count ?? 0);
+
+      const { data: ratings } = await supabase
+        .from("ratings")
+        .select("stars")
+        .eq("rated_user_id", user.id);
+      if (active && ratings && ratings.length > 0) {
+        const avg = ratings.reduce((s, r) => s + (r.stars ?? 0), 0) / ratings.length;
+        setRating(Number(avg.toFixed(1)));
       }
     })();
     return () => {
@@ -151,15 +147,19 @@ function HomeScreen() {
       {/* Stats row — overlapping the header */}
       <section className="px-5 -mt-14">
         <div className="grid grid-cols-3 gap-3">
-          <StatCard icon={<Briefcase className="h-4 w-4 text-primary" />} value="24" label="Jobs Done" />
+          <StatCard
+            icon={<Briefcase className="h-4 w-4 text-primary" />}
+            value={String(jobsDone)}
+            label="Jobs Done"
+          />
           <StatCard
             icon={<Star className="h-4 w-4 text-accent" fill="currentColor" />}
-            value="4.8"
+            value={rating != null ? String(rating) : "—"}
             label="Rating"
           />
           <StatCard
             icon={<Award className="h-4 w-4 text-primary" />}
-            value="Silver"
+            value={jobsDone >= 20 ? "Gold" : jobsDone >= 5 ? "Silver" : "Starter"}
             label="Level"
           />
         </div>
@@ -187,41 +187,55 @@ function HomeScreen() {
       <section className="mt-6 px-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-bold text-foreground">Jobs near you</h2>
-          <button className="text-xs font-semibold text-primary">See all</button>
+          <Link to="/search" className="text-xs font-semibold text-primary">
+            See all
+          </Link>
         </div>
         <div className="space-y-3">
-          {JOBS.map((job) => (
-            <Link
-              key={job.id}
-              to="/home"
-              className="block rounded-2xl border border-border bg-card p-4 shadow-sm active:scale-[0.99] transition-transform"
-            >
-              <div className="flex gap-3">
-                <div className={cn("h-12 w-12 flex-shrink-0 rounded-xl flex items-center justify-center", job.tint)}>
-                  <job.icon className="h-6 w-6" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold text-foreground text-sm leading-tight">{job.title}</p>
-                    <p className="text-primary font-bold text-sm whitespace-nowrap">{formatNaira(job.pay)}</p>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <span>{job.client}</span>
-                      <span>·</span>
-                      <Star className="h-3 w-3 text-accent" fill="currentColor" />
-                      <span>{job.rating}</span>
+          {loadingJobs ? (
+            <p className="text-center text-sm text-muted-foreground py-6">Loading jobs…</p>
+          ) : jobs.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground py-6">
+              No open jobs yet. Check back soon!
+            </p>
+          ) : (
+            jobs.map((job) => {
+              const { Icon, tint } = pickJobIcon(job.type);
+              return (
+                <Link
+                  key={job.id}
+                  to="/jobs/$jobId"
+                  params={{ jobId: job.id }}
+                  className="block rounded-2xl border border-border bg-card p-4 shadow-sm active:scale-[0.99] transition-transform"
+                >
+                  <div className="flex gap-3">
+                    <div className={cn("h-12 w-12 flex-shrink-0 rounded-xl flex items-center justify-center", tint)}>
+                      <Icon className="h-6 w-6" />
                     </div>
-                    <p className="text-xs text-muted-foreground">{job.eta}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-bold text-foreground text-sm leading-tight">{job.title}</p>
+                        <p className="text-primary font-bold text-sm whitespace-nowrap">
+                          {formatNaira(job.budget_max ?? job.budget_min)}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between mt-1">
+                        <p className="text-xs text-muted-foreground truncate">
+                          {job.location ?? "Remote"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(job.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <Tag>{job.type === "digital" ? "Digital" : "Physical"}</Tag>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex gap-2 mt-3">
-                    <Tag>{job.type}</Tag>
-                    <Tag>{job.category}</Tag>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+                </Link>
+              );
+            })
+          )}
         </div>
       </section>
     </MobileShell>
