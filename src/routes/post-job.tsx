@@ -49,24 +49,27 @@ function PostJobScreen() {
     if (!canSubmit || loading) return;
     setLoading(true);
     try {
-      if (typeof window !== "undefined") {
-        const job = {
-          id: crypto.randomUUID(),
-          title,
-          workType,
-          timing,
-          location,
-          budgetMin: Number(budgetMin),
-          budgetMax: Number(budgetMax),
-          details,
-          workers,
-          createdAt: new Date().toISOString(),
-        };
-        const existing = JSON.parse(localStorage.getItem("workbridge_jobs") || "[]");
-        localStorage.setItem("workbridge_jobs", JSON.stringify([job, ...existing]));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Please log in to post a job");
+        navigate({ to: "/login" });
+        return;
       }
-      toast.success("Job posted — workers nearby are being notified");
-      navigate({ to: "/home" });
+      const fullDescription = details
+        ? `${title}\n\n${details}\n\nTiming: ${timing} · Workers needed: ${workers}`
+        : `${title}\n\nTiming: ${timing} · Workers needed: ${workers}`;
+      const { error } = await supabase.from("jobs").insert({
+        client_id: user.id,
+        title,
+        description: fullDescription,
+        type: workType!,
+        location,
+        budget_min: Number(budgetMin),
+        budget_max: Number(budgetMax),
+        status: "open",
+      });
+      if (error) throw error;
+      navigate({ to: "/post-job-success" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not post job");
     } finally {
