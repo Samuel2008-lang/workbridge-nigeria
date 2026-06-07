@@ -15,6 +15,7 @@ import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as RoleSelectRouteImport } from './routes/role-select'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PostJobRouteImport } from './routes/post-job'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
@@ -51,6 +52,11 @@ const RoleSelectRoute = RoleSelectRouteImport.update({
   path: '/role-select',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostJobRoute = PostJobRouteImport.update({
   id: '/post-job',
   path: '/post-job',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/post-job': typeof PostJobRoute
+  '/profile': typeof ProfileRoute
   '/role-select': typeof RoleSelectRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/post-job': typeof PostJobRoute
+  '/profile': typeof ProfileRoute
   '/role-select': typeof RoleSelectRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/post-job': typeof PostJobRoute
+  '/profile': typeof ProfileRoute
   '/role-select': typeof RoleSelectRoute
   '/search': typeof SearchRoute
   '/signup': typeof SignupRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/post-job'
+    | '/profile'
     | '/role-select'
     | '/search'
     | '/signup'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/post-job'
+    | '/profile'
     | '/role-select'
     | '/search'
     | '/signup'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/messages'
     | '/post-job'
+    | '/profile'
     | '/role-select'
     | '/search'
     | '/signup'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRoute
   PostJobRoute: typeof PostJobRoute
+  ProfileRoute: typeof ProfileRoute
   RoleSelectRoute: typeof RoleSelectRoute
   SearchRoute: typeof SearchRoute
   SignupRoute: typeof SignupRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoleSelectRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/post-job': {
       id: '/post-job'
       path: '/post-job'
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRoute,
   PostJobRoute: PostJobRoute,
+  ProfileRoute: ProfileRoute,
   RoleSelectRoute: RoleSelectRoute,
   SearchRoute: SearchRoute,
   SignupRoute: SignupRoute,
