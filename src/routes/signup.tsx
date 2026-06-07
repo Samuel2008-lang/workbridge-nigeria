@@ -73,7 +73,7 @@ function SignupScreen() {
     if (!canSubmit || loading) return;
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
@@ -81,7 +81,18 @@ function SignupScreen() {
           data: { first_name: firstName, phone, city, language, role },
         },
       });
-      if (error) throw error;
+      if (error) {
+        if (/already|registered|exists/i.test(error.message)) {
+          toast.error("An account with this email already exists. Please log in instead.");
+          return;
+        }
+        throw error;
+      }
+      // Supabase returns a user with empty identities when the email is already registered
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        toast.error("An account with this email already exists. Please log in instead.");
+        return;
+      }
 
       if (typeof window !== "undefined") {
         localStorage.setItem(
