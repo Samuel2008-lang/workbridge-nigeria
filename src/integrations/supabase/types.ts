@@ -581,12 +581,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _release_escrow: {
+        Args: { _job_id: string; _to_bucket: string }
+        Returns: undefined
+      }
+      auto_confirm_jobs: { Args: never; Returns: number }
+      confirm_job_complete: { Args: { _job_id: string }; Returns: Json }
+      deposit_to_wallet: {
+        Args: { _amount: number; _reference: string; _user_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      hire_worker: {
+        Args: { _amount: number; _job_id: string; _worker_id: string }
+        Returns: Json
+      }
+      mark_job_complete: { Args: { _job_id: string }; Returns: Json }
+      set_wallet_pin: { Args: { _pin: string }; Returns: Json }
+      thaw_frozen_funds: { Args: never; Returns: number }
+      withdraw_from_wallet: {
+        Args: { _amount: number; _pin: string }
+        Returns: Json
       }
     }
     Enums: {
