@@ -11,6 +11,7 @@ export const Route = createFileRoute("/messages")({
 
 type Thread = {
   otherId: string;
+  jobId: string;
   otherName: string;
   lastMessage: string;
   lastAt: string;
@@ -32,7 +33,7 @@ function MessagesScreen() {
 
       const { data: messages } = await supabase
         .from("messages")
-        .select("id, sender_id, receiver_id, content, is_read, created_at")
+        .select("id, job_id, sender_id, receiver_id, content, is_read, created_at")
         .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
         .order("created_at", { ascending: false })
         .limit(200);
@@ -42,33 +43,32 @@ function MessagesScreen() {
         return;
       }
 
-      // group by other-party id
       const map = new Map<string, Thread>();
       for (const m of messages) {
         const otherId = m.sender_id === user.id ? m.receiver_id : m.sender_id;
-        if (!map.has(otherId)) {
-          map.set(otherId, {
+        const key = `${m.job_id ?? "none"}:${otherId}`;
+        if (!map.has(key)) {
+          map.set(key, {
             otherId,
+            jobId: m.job_id ?? "",
             otherName: "User",
             lastMessage: m.content,
             lastAt: m.created_at,
             unread: 0,
           });
         }
-        const t = map.get(otherId)!;
+        const t = map.get(key)!;
         if (!m.is_read && m.receiver_id === user.id) t.unread += 1;
       }
 
-      const otherIds = Array.from(map.keys());
+      const otherIds = Array.from(new Set(Array.from(map.values()).map((t) => t.otherId)));
       if (otherIds.length) {
         const { data: profiles } = await supabase
           .from("profiles")
           .select("id, full_name")
           .in("id", otherIds);
-        profiles?.forEach((p) => {
-          const t = map.get(p.id);
-          if (t && p.full_name) t.otherName = p.full_name;
-        });
+        const nameMap = new Map((profiles ?? []).map((p) => [p.id, p.full_name as string]));
+        map.forEach((t) => { if (nameMap.get(t.otherId)) t.otherName = nameMap.get(t.otherId)!; });
       }
 
       if (active) {
@@ -109,30 +109,36 @@ function MessagesScreen() {
           </div>
         ) : (
           <ul className="space-y-2">
-            {threads.map((t) => (
-              <li
-                key={t.otherId}
-                className="flex items-center gap-3 p-3 rounded-2xl border border-border bg-card"
-              >
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                  {t.otherName.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-foreground text-sm">{t.otherName}</p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {new Date(t.lastAt).toLocaleDateString()}
-                    </p>
+            {threads.map((t) => {
+              const inner = (
+                <div className="flex items-center gap-3 p-3 rounded-2xl border border-border bg-card">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                    {t.otherName.charAt(0).toUpperCase()}
                   </div>
-                  <p className="text-xs text-muted-foreground truncate">{t.lastMessage}</p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-foreground text-sm">{t.otherName}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {new Date(t.lastAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{t.lastMessage}</p>
+                  </div>
+                  {t.unread > 0 && (
+                    <span className="h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                      {t.unread}
+                    </span>
+                  )}
                 </div>
-                {t.unread > 0 && (
-                  <span className="h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
-                    {t.unread}
-                  </span>
-                )}
-              </li>
-            ))}
+              );
+              return t.jobId ? (
+                <li key={`${t.jobId}:${t.otherId}`}>
+                  <Link to="/chat/$jobId/$otherId" params={{ jobId: t.jobId, otherId: t.otherId }}>{inner}</Link>
+                </li>
+              ) : (
+                <li key={`none:${t.otherId}`}>{inner}</li>
+              );
+            })}
           </ul>
         )}
       </div>
