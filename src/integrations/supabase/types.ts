@@ -591,6 +591,7 @@ export type Database = {
         Args: { _amount: number; _reference: string; _user_id: string }
         Returns: undefined
       }
+      expire_hires: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -603,7 +604,21 @@ export type Database = {
         Returns: Json
       }
       mark_job_complete: { Args: { _job_id: string }; Returns: Json }
+      raise_dispute: {
+        Args: { _description: string; _job_id: string; _reason: string }
+        Returns: Json
+      }
       set_wallet_pin: { Args: { _pin: string }; Returns: Json }
+      submit_rating: {
+        Args: {
+          _comment: string
+          _job_id: string
+          _rated_user_id: string
+          _stars: number
+          _tags: string[]
+        }
+        Returns: Json
+      }
       thaw_frozen_funds: { Args: never; Returns: number }
       withdraw_from_wallet: {
         Args: { _amount: number; _pin: string }

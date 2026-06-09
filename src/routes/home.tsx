@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Star, Award, Briefcase, Wrench, Sparkles, Truck, PenLine, ChefHat, Leaf, ImageIcon } from "lucide-react";
+import { Star, Award, Briefcase, Wrench, Sparkles, Truck, PenLine, ChefHat, Leaf, ImageIcon, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,6 +52,8 @@ function HomeScreen() {
   const [loadingJobs, setLoadingJobs] = useState(true);
   const [jobsDone, setJobsDone] = useState(0);
   const [rating, setRating] = useState<number | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [unread, setUnread] = useState<number>(0);
 
   useEffect(() => {
     let active = true;
@@ -98,6 +100,14 @@ function HomeScreen() {
         const avg = ratings.reduce((s, r) => s + (r.stars ?? 0), 0) / ratings.length;
         setRating(Number(avg.toFixed(1)));
       }
+
+      const { data: w } = await supabase.from("wallets").select("available_balance").eq("user_id", user.id).maybeSingle();
+      if (active && w) setWalletBalance(Number(w.available_balance ?? 0));
+
+      const { count: nc } = await supabase.from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id).eq("is_read", false);
+      if (active) setUnread(nc ?? 0);
     })();
     return () => {
       active = false;
@@ -118,15 +128,25 @@ function HomeScreen() {
             <p className="text-xs text-white/70">Good morning 👋</p>
             <h1 className="text-2xl font-bold mt-0.5">{firstName}</h1>
           </div>
-          <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold border border-white/30">
-            {initial}
+          <div className="flex items-center gap-2">
+            <Link to="/notifications" className="relative h-10 w-10 rounded-full bg-white/20 flex items-center justify-center border border-white/30">
+              <Bell className="h-5 w-5" />
+              {unread > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 min-w-5 px-1 rounded-full bg-accent text-foreground text-[10px] font-bold flex items-center justify-center">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              )}
+            </Link>
+            <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold border border-white/30">
+              {initial}
+            </div>
           </div>
         </div>
 
         {/* Wallet card */}
         <div className="mt-6 rounded-2xl border border-white/20 bg-white/10 backdrop-blur p-5 shadow-lg">
           <p className="text-[11px] tracking-widest text-white/70 font-medium">WALLET BALANCE</p>
-          <p className="text-3xl font-bold mt-1">{formatNaira(12500)}</p>
+          <p className="text-3xl font-bold mt-1">{formatNaira(walletBalance)}</p>
           <div className="flex gap-2 mt-4">
             <Link
               to="/wallet"
