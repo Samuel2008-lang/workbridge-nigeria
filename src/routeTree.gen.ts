@@ -18,11 +18,15 @@ import { Route as RoleSelectRouteImport } from './routes/role-select'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PostJobSuccessRouteImport } from './routes/post-job-success'
 import { Route as PostJobRouteImport } from './routes/post-job'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RateJobIdRouteImport } from './routes/rate.$jobId'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
+import { Route as DisputeJobIdRouteImport } from './routes/dispute.$jobId'
+import { Route as ChatJobIdOtherIdRouteImport } from './routes/chat.$jobId.$otherId'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -69,6 +73,11 @@ const PostJobRoute = PostJobRouteImport.update({
   path: '/post-job',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MessagesRoute = MessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
@@ -89,9 +98,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RateJobIdRoute = RateJobIdRouteImport.update({
+  id: '/rate/$jobId',
+  path: '/rate/$jobId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobsJobIdRoute = JobsJobIdRouteImport.update({
   id: '/jobs/$jobId',
   path: '/jobs/$jobId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DisputeJobIdRoute = DisputeJobIdRouteImport.update({
+  id: '/dispute/$jobId',
+  path: '/dispute/$jobId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatJobIdOtherIdRoute = ChatJobIdOtherIdRouteImport.update({
+  id: '/chat/$jobId/$otherId',
+  path: '/chat/$jobId/$otherId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -100,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
+  '/notifications': typeof NotificationsRoute
   '/post-job': typeof PostJobRoute
   '/post-job-success': typeof PostJobSuccessRoute
   '/profile': typeof ProfileRoute
@@ -109,13 +134,17 @@ export interface FileRoutesByFullPath {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
+  '/rate/$jobId': typeof RateJobIdRoute
+  '/chat/$jobId/$otherId': typeof ChatJobIdOtherIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
+  '/notifications': typeof NotificationsRoute
   '/post-job': typeof PostJobRoute
   '/post-job-success': typeof PostJobSuccessRoute
   '/profile': typeof ProfileRoute
@@ -125,7 +154,10 @@ export interface FileRoutesByTo {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
+  '/rate/$jobId': typeof RateJobIdRoute
+  '/chat/$jobId/$otherId': typeof ChatJobIdOtherIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,6 +165,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
+  '/notifications': typeof NotificationsRoute
   '/post-job': typeof PostJobRoute
   '/post-job-success': typeof PostJobSuccessRoute
   '/profile': typeof ProfileRoute
@@ -142,7 +175,10 @@ export interface FileRoutesById {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
+  '/rate/$jobId': typeof RateJobIdRoute
+  '/chat/$jobId/$otherId': typeof ChatJobIdOtherIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +187,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/messages'
+    | '/notifications'
     | '/post-job'
     | '/post-job-success'
     | '/profile'
@@ -160,13 +197,17 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/dispute/$jobId'
     | '/jobs/$jobId'
+    | '/rate/$jobId'
+    | '/chat/$jobId/$otherId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/home'
     | '/login'
     | '/messages'
+    | '/notifications'
     | '/post-job'
     | '/post-job-success'
     | '/profile'
@@ -176,13 +217,17 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/dispute/$jobId'
     | '/jobs/$jobId'
+    | '/rate/$jobId'
+    | '/chat/$jobId/$otherId'
   id:
     | '__root__'
     | '/'
     | '/home'
     | '/login'
     | '/messages'
+    | '/notifications'
     | '/post-job'
     | '/post-job-success'
     | '/profile'
@@ -192,7 +237,10 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/dispute/$jobId'
     | '/jobs/$jobId'
+    | '/rate/$jobId'
+    | '/chat/$jobId/$otherId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -200,6 +248,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRoute
+  NotificationsRoute: typeof NotificationsRoute
   PostJobRoute: typeof PostJobRoute
   PostJobSuccessRoute: typeof PostJobSuccessRoute
   ProfileRoute: typeof ProfileRoute
@@ -209,7 +258,10 @@ export interface RootRouteChildren {
   VerifyOtpRoute: typeof VerifyOtpRoute
   WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
+  DisputeJobIdRoute: typeof DisputeJobIdRoute
   JobsJobIdRoute: typeof JobsJobIdRoute
+  RateJobIdRoute: typeof RateJobIdRoute
+  ChatJobIdOtherIdRoute: typeof ChatJobIdOtherIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -277,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PostJobRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/messages': {
       id: '/messages'
       path: '/messages'
@@ -305,11 +364,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rate/$jobId': {
+      id: '/rate/$jobId'
+      path: '/rate/$jobId'
+      fullPath: '/rate/$jobId'
+      preLoaderRoute: typeof RateJobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobs/$jobId': {
       id: '/jobs/$jobId'
       path: '/jobs/$jobId'
       fullPath: '/jobs/$jobId'
       preLoaderRoute: typeof JobsJobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dispute/$jobId': {
+      id: '/dispute/$jobId'
+      path: '/dispute/$jobId'
+      fullPath: '/dispute/$jobId'
+      preLoaderRoute: typeof DisputeJobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat/$jobId/$otherId': {
+      id: '/chat/$jobId/$otherId'
+      path: '/chat/$jobId/$otherId'
+      fullPath: '/chat/$jobId/$otherId'
+      preLoaderRoute: typeof ChatJobIdOtherIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -320,6 +400,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRoute,
+  NotificationsRoute: NotificationsRoute,
   PostJobRoute: PostJobRoute,
   PostJobSuccessRoute: PostJobSuccessRoute,
   ProfileRoute: ProfileRoute,
@@ -329,7 +410,10 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyOtpRoute: VerifyOtpRoute,
   WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
+  DisputeJobIdRoute: DisputeJobIdRoute,
   JobsJobIdRoute: JobsJobIdRoute,
+  RateJobIdRoute: RateJobIdRoute,
+  ChatJobIdOtherIdRoute: ChatJobIdOtherIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
