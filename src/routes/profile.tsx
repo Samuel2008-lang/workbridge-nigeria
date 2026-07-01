@@ -73,7 +73,7 @@ function ProfileScreen() {
     navigate({ to: "/welcome" });
   };
 
-  const name = profile?.full_name ?? "WorkBridge user";
+  const name = profile?.full_name?.trim() || email?.split("@")[0] || "WorkBridge user";
 
   return (
     <MobileShell>
