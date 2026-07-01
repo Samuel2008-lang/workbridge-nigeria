@@ -19,8 +19,14 @@ function WelcomeScreen() {
         background: "linear-gradient(180deg, #0F4A32 0%, #2D9E6F 100%)",
       }}
     >
-      {/* Top left bridge emoji */}
-      <div className="text-6xl animate-fade-in">🌉</div>
+      {/* Top center logo */}
+      <div className="flex justify-center animate-fade-in">
+        <img
+          src="/__l5e/assets-v1/cd15fc17-e5a9-4bdc-a4a5-99380f3b47b0/workbridge-logo.png"
+          alt="WorkBridge"
+          className="h-[120px] w-[120px]"
+        />
+      </div>
 
       {/* Lower half content with slide-up animation */}
       <div className="animate-slide-up mb-4">
