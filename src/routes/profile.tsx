@@ -125,7 +125,7 @@ function ProfileScreen() {
       <section className="px-5 mt-8">
         <button
           onClick={handleLogout}
-          className="w-full h-12 rounded-2xl border-2 border-destructive/30 text-destructive font-semibold text-sm flex items-center justify-center gap-2"
+          className="w-full h-12 rounded-2xl border border-border bg-white text-muted-foreground font-semibold text-sm flex items-center justify-center gap-2 hover:bg-muted transition-colors"
         >
           <LogOut className="h-4 w-4" />
           Log out
