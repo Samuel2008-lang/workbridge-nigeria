@@ -134,6 +134,7 @@ export type Database = {
           job_id: string
           raised_by: string
           reason: string
+          resolution: string | null
           resolution_note: string | null
           resolved_at: string | null
           resolved_by: string | null
@@ -149,6 +150,7 @@ export type Database = {
           job_id: string
           raised_by: string
           reason: string
+          resolution?: string | null
           resolution_note?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
@@ -164,6 +166,7 @@ export type Database = {
           job_id?: string
           raised_by?: string
           reason?: string
+          resolution?: string | null
           resolution_note?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
@@ -585,6 +588,10 @@ export type Database = {
         Args: { _job_id: string; _to_bucket: string }
         Returns: undefined
       }
+      admin_resolve_dispute: {
+        Args: { _decision: string; _dispute_id: string; _worker_pct?: number }
+        Returns: Json
+      }
       auto_confirm_jobs: { Args: never; Returns: number }
       confirm_job_complete: { Args: { _job_id: string }; Returns: Json }
       deposit_to_wallet: {
@@ -603,9 +610,14 @@ export type Database = {
         Args: { _amount: number; _job_id: string; _worker_id: string }
         Returns: Json
       }
+      is_platform_admin: { Args: never; Returns: boolean }
       mark_job_complete: { Args: { _job_id: string }; Returns: Json }
       raise_dispute: {
         Args: { _description: string; _job_id: string; _reason: string }
+        Returns: Json
+      }
+      respond_cash_request: {
+        Args: { _accept: boolean; _request_id: string }
         Returns: Json
       }
       set_wallet_pin: { Args: { _pin: string }; Returns: Json }
@@ -661,6 +673,8 @@ export type Database = {
         | "auto_confirmed"
         | "job_closed"
         | "hire_expired"
+        | "cash_agreed"
+        | "cash_declined"
       onboarding_type: "worker_prejob" | "client_onboarding"
       review_status: "pending" | "published" | "held" | "removed" | "disputed"
       transaction_status: "pending" | "completed" | "failed"
@@ -830,6 +844,8 @@ export const Constants = {
         "auto_confirmed",
         "job_closed",
         "hire_expired",
+        "cash_agreed",
+        "cash_declined",
       ],
       onboarding_type: ["worker_prejob", "client_onboarding"],
       review_status: ["pending", "published", "held", "removed", "disputed"],
