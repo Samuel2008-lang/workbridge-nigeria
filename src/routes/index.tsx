@@ -50,8 +50,12 @@ function SplashScreen() {
         background: "linear-gradient(180deg, #0F4A32 0%, #2D9E6F 100%)",
       }}
     >
-      {/* Bridge emoji with gentle pulse */}
-      <div className="animate-pulse-gentle text-7xl">🌉</div>
+      {/* Logo */}
+      <img
+        src="/__l5e/assets-v1/cd15fc17-e5a9-4bdc-a4a5-99380f3b47b0/workbridge-logo.png"
+        alt="WorkBridge"
+        className="h-[100px] w-[100px] rounded-2xl animate-pulse-gentle"
+      />
 
       {/* Brand name */}
       <h1
