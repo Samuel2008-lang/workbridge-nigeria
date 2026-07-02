@@ -28,6 +28,8 @@ function ChatScreen() {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [job, setJob] = useState<{ client_id: string; hired_worker_id: string | null; type: string; payment_mode: string } | null>(null);
+  const [cashReq, setCashReq] = useState<{ id: string; status: string; requested_by: string } | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
 
@@ -38,8 +40,14 @@ function ChatScreen() {
     if (!user) { navigate({ to: "/login" }); return; }
     setMe(user.id);
 
-    const { data: prof } = await supabase.from("profiles").select("full_name").eq("id", otherId).maybeSingle();
+    const [{ data: prof }, { data: j }, { data: cr }] = await Promise.all([
+      supabase.from("profiles").select("full_name").eq("id", otherId).maybeSingle(),
+      supabase.from("jobs").select("client_id, hired_worker_id, type, payment_mode").eq("id", jobId).maybeSingle(),
+      supabase.from("cash_payment_requests").select("id, status, requested_by").eq("job_id", jobId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    ]);
     if (prof?.full_name) setOtherName(prof.full_name);
+    if (j) setJob(j as any);
+    setCashReq(cr as any);
 
     const { data } = await supabase
       .from("messages")
@@ -53,6 +61,29 @@ function ChatScreen() {
     await supabase.from("messages").update({ is_read: true })
       .eq("job_id", jobId).eq("sender_id", otherId).eq("receiver_id", user.id);
   }, [jobId, otherId, navigate]);
+
+  const isClient = me && job?.client_id === me;
+  const isPhysical = job?.type === "physical";
+  const cashAgreed = job?.payment_mode === "cash";
+  const canRequestCash = isClient && isPhysical && !cashAgreed && (!cashReq || cashReq.status === "declined");
+  const canRespondCash = !isClient && cashReq?.status === "pending";
+
+  const requestCash = async () => {
+    if (!me) return;
+    const { error } = await supabase.from("cash_payment_requests").insert({ job_id: jobId, requested_by: me });
+    if (error) return toast.error(error.message);
+    toast.success("Cash payment request sent");
+    load();
+  };
+
+  const respondCash = async (accept: boolean) => {
+    if (!cashReq) return;
+    const { error } = await supabase.rpc("respond_cash_request", { _request_id: cashReq.id, _accept: accept });
+    if (error) return toast.error(error.message);
+    toast.success(accept ? "Cash agreed" : "Cash declined");
+    load();
+  };
+
 
   useEffect(() => {
     load();
