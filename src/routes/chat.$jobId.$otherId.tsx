@@ -147,7 +147,12 @@ function ChatScreen() {
           <p className="font-semibold text-sm truncate">{otherName}</p>
           <p className="text-[11px] text-muted-foreground">Job chat</p>
         </div>
-      </header>
+      {cashAgreed && (
+        <div className="bg-red-600 text-white text-xs font-semibold text-center px-3 py-2">
+          ⚠️ Cash transaction — not covered by WorkBridge payment protection
+        </div>
+      )}
+
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {msgs.length === 0 && <p className="text-center text-sm text-muted-foreground py-10">No messages yet. Say hi 👋</p>}
