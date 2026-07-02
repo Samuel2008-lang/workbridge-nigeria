@@ -56,7 +56,7 @@ function PostJobScreen() {
         return;
       }
       const { data: ack } = await supabase.from("onboarding_acknowledgements")
-        .select("id").eq("user_id", user.id).eq("role", "client").maybeSingle();
+        .select("id").eq("user_id", user.id).eq("type", "client_first_post").is("job_id", null).maybeSingle();
       if (!ack) {
         navigate({ to: "/client-onboarding" });
         return;
