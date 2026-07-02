@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkerOnboardingRouteImport } from './routes/worker-onboarding'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
@@ -28,6 +29,11 @@ import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 import { Route as DisputeJobIdRouteImport } from './routes/dispute.$jobId'
 import { Route as ChatJobIdOtherIdRouteImport } from './routes/chat.$jobId.$otherId'
 
+const WorkerOnboardingRoute = WorkerOnboardingRouteImport.update({
+  id: '/worker-onboarding',
+  path: '/worker-onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/worker-onboarding': typeof WorkerOnboardingRoute
   '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/rate/$jobId': typeof RateJobIdRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/worker-onboarding': typeof WorkerOnboardingRoute
   '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/rate/$jobId': typeof RateJobIdRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/worker-onboarding': typeof WorkerOnboardingRoute
   '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/rate/$jobId': typeof RateJobIdRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/worker-onboarding'
     | '/dispute/$jobId'
     | '/jobs/$jobId'
     | '/rate/$jobId'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/worker-onboarding'
     | '/dispute/$jobId'
     | '/jobs/$jobId'
     | '/rate/$jobId'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/worker-onboarding'
     | '/dispute/$jobId'
     | '/jobs/$jobId'
     | '/rate/$jobId'
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   VerifyOtpRoute: typeof VerifyOtpRoute
   WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
+  WorkerOnboardingRoute: typeof WorkerOnboardingRoute
   DisputeJobIdRoute: typeof DisputeJobIdRoute
   JobsJobIdRoute: typeof JobsJobIdRoute
   RateJobIdRoute: typeof RateJobIdRoute
@@ -266,6 +279,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/worker-onboarding': {
+      id: '/worker-onboarding'
+      path: '/worker-onboarding'
+      fullPath: '/worker-onboarding'
+      preLoaderRoute: typeof WorkerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/welcome': {
       id: '/welcome'
       path: '/welcome'
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyOtpRoute: VerifyOtpRoute,
   WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
+  WorkerOnboardingRoute: WorkerOnboardingRoute,
   DisputeJobIdRoute: DisputeJobIdRoute,
   JobsJobIdRoute: JobsJobIdRoute,
   RateJobIdRoute: RateJobIdRoute,
