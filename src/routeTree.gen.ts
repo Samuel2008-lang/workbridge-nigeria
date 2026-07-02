@@ -24,6 +24,7 @@ import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as ClientOnboardingRouteImport } from './routes/client-onboarding'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RateJobIdRouteImport } from './routes/rate.$jobId'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
@@ -105,6 +106,11 @@ const ClientOnboardingRoute = ClientOnboardingRouteImport.update({
   path: '/client-onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -133,6 +139,7 @@ const ChatJobIdOtherIdRoute = ChatJobIdOtherIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -178,6 +186,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/client-onboarding'
     | '/home'
     | '/login'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/client-onboarding'
     | '/home'
     | '/login'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/client-onboarding'
     | '/home'
     | '/login'
@@ -269,6 +281,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   ClientOnboardingRoute: typeof ClientOnboardingRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -437,6 +457,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   ClientOnboardingRoute: ClientOnboardingRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
