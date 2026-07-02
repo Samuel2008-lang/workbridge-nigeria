@@ -137,8 +137,45 @@ function WalletScreen() {
   async function handleAddMoney() {
     const amt = Number(addAmount);
     if (!amt || amt < 100) { toast.error("Enter at least ₦100"); return; }
-    toast.info("Flutterwave top-up will open here (server endpoint pending).");
-    setAddOpen(false); setAddAmount("");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { toast.error("Please log in"); return; }
+    const { data: prof } = await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+    // Load Flutterwave inline script
+    const w = window as any;
+    if (!w.FlutterwaveCheckout) {
+      await new Promise<void>((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://checkout.flutterwave.com/v3.js";
+        s.onload = () => resolve(); s.onerror = () => reject(new Error("script"));
+        document.head.appendChild(s);
+      }).catch(() => {});
+    }
+    const pubKey = (import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY as string) || "FLWPUBK_TEST-SANDBOXDEMOKEY-X";
+    const txRef = `WB-${user.id}-${Date.now()}`;
+    if (!w.FlutterwaveCheckout) { toast.error("Payment SDK failed to load"); return; }
+    setAddOpen(false);
+    w.FlutterwaveCheckout({
+      public_key: pubKey,
+      tx_ref: txRef,
+      amount: amt,
+      currency: "NGN",
+      payment_options: "card,ussd,banktransfer",
+      customer: { email: user.email, name: prof?.full_name || user.email },
+      customizations: { title: "WorkBridge Wallet Top-up", description: "Add money to your wallet" },
+      redirect_url: window.location.origin + "/wallet",
+      callback: async (resp: any) => {
+        try {
+          const { data, error } = await supabase.functions.invoke("flutterwave-verify", {
+            body: { transaction_id: resp.transaction_id, tx_ref: txRef, expected_amount: amt },
+          });
+          if (error || !(data as any)?.ok) throw new Error((data as any)?.error || error?.message || "Verify failed");
+          toast.success(`₦${amt.toLocaleString()} has been added to your wallet successfully!`);
+          await load();
+        } catch (e: any) { toast.error(e.message || "Payment verification failed"); }
+      },
+      onclose: () => {},
+    });
+    setAddAmount("");
   }
 
   return (
