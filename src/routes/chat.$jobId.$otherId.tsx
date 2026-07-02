@@ -213,6 +213,13 @@ function ChatScreen() {
           <Send className="h-4 w-4" />
         </button>
       </div>
+      {canRequestCash && (
+        <div className="border-t border-border bg-card px-3 pb-3">
+          <button onClick={requestCash} className="w-full h-9 rounded-full border border-primary text-primary text-xs font-semibold">
+            Request Cash Payment
+          </button>
+        </div>
+      )}
     </div>
   );
 }
