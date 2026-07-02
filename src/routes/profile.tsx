@@ -122,7 +122,15 @@ function ProfileScreen() {
         )}
       </section>
 
-      <section className="px-5 mt-8">
+      <section className="px-5 mt-8 space-y-3">
+        {email?.toLowerCase() === "hopeegbon28@gmail.com" && (
+          <button
+            onClick={() => navigate({ to: "/admin" })}
+            className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2"
+          >
+            🛡️ Admin Dashboard
+          </button>
+        )}
         <button
           onClick={handleLogout}
           className="w-full h-12 rounded-2xl border border-border bg-white text-muted-foreground font-semibold text-sm flex items-center justify-center gap-2 hover:bg-muted transition-colors"
