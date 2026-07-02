@@ -99,7 +99,7 @@ function OverviewTab() {
       supabase.from("jobs").select("id", { count: "exact", head: true }).eq("status", "completed"),
       supabase.from("jobs").select("id", { count: "exact", head: true }).eq("status", "assigned"),
       supabase.from("disputes").select("id", { count: "exact", head: true }).eq("status", "open"),
-      supabase.from("disputes").select("id", { count: "exact", head: true }).eq("status", "resolved"),
+      supabase.from("disputes").select("id", { count: "exact", head: true }).in("status", ["resolved_worker", "resolved_client", "resolved_split", "closed"]),
       supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", iso),
       supabase.from("jobs").select("id", { count: "exact", head: true }).gte("created_at", iso),
       supabase.from("jobs").select("commission_amount").not("commission_amount", "is", null),
