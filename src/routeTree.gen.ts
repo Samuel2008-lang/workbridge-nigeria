@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkerOnboardingRouteImport } from './routes/worker-onboarding'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
@@ -22,12 +23,19 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as ClientOnboardingRouteImport } from './routes/client-onboarding'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RateJobIdRouteImport } from './routes/rate.$jobId'
 import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 import { Route as DisputeJobIdRouteImport } from './routes/dispute.$jobId'
 import { Route as ChatJobIdOtherIdRouteImport } from './routes/chat.$jobId.$otherId'
 
+const WorkerOnboardingRoute = WorkerOnboardingRouteImport.update({
+  id: '/worker-onboarding',
+  path: '/worker-onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
@@ -93,6 +101,16 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClientOnboardingRoute = ClientOnboardingRouteImport.update({
+  id: '/client-onboarding',
+  path: '/client-onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -121,6 +139,8 @@ const ChatJobIdOtherIdRoute = ChatJobIdOtherIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
@@ -134,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/worker-onboarding': typeof WorkerOnboardingRoute
   '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/rate/$jobId': typeof RateJobIdRoute
@@ -141,6 +162,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
@@ -154,6 +177,7 @@ export interface FileRoutesByTo {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/worker-onboarding': typeof WorkerOnboardingRoute
   '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/rate/$jobId': typeof RateJobIdRoute
@@ -162,6 +186,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
@@ -175,6 +201,7 @@ export interface FileRoutesById {
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
   '/welcome': typeof WelcomeRoute
+  '/worker-onboarding': typeof WorkerOnboardingRoute
   '/dispute/$jobId': typeof DisputeJobIdRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/rate/$jobId': typeof RateJobIdRoute
@@ -184,6 +211,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/client-onboarding'
     | '/home'
     | '/login'
     | '/messages'
@@ -197,6 +226,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/worker-onboarding'
     | '/dispute/$jobId'
     | '/jobs/$jobId'
     | '/rate/$jobId'
@@ -204,6 +234,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
+    | '/client-onboarding'
     | '/home'
     | '/login'
     | '/messages'
@@ -217,6 +249,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/worker-onboarding'
     | '/dispute/$jobId'
     | '/jobs/$jobId'
     | '/rate/$jobId'
@@ -224,6 +257,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/client-onboarding'
     | '/home'
     | '/login'
     | '/messages'
@@ -237,6 +272,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/wallet'
     | '/welcome'
+    | '/worker-onboarding'
     | '/dispute/$jobId'
     | '/jobs/$jobId'
     | '/rate/$jobId'
@@ -245,6 +281,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ClientOnboardingRoute: typeof ClientOnboardingRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRoute
@@ -258,6 +296,7 @@ export interface RootRouteChildren {
   VerifyOtpRoute: typeof VerifyOtpRoute
   WalletRoute: typeof WalletRoute
   WelcomeRoute: typeof WelcomeRoute
+  WorkerOnboardingRoute: typeof WorkerOnboardingRoute
   DisputeJobIdRoute: typeof DisputeJobIdRoute
   JobsJobIdRoute: typeof JobsJobIdRoute
   RateJobIdRoute: typeof RateJobIdRoute
@@ -266,6 +305,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/worker-onboarding': {
+      id: '/worker-onboarding'
+      path: '/worker-onboarding'
+      fullPath: '/worker-onboarding'
+      preLoaderRoute: typeof WorkerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/welcome': {
       id: '/welcome'
       path: '/welcome'
@@ -357,6 +403,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/client-onboarding': {
+      id: '/client-onboarding'
+      path: '/client-onboarding'
+      fullPath: '/client-onboarding'
+      preLoaderRoute: typeof ClientOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -397,6 +457,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ClientOnboardingRoute: ClientOnboardingRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRoute,
@@ -410,6 +472,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyOtpRoute: VerifyOtpRoute,
   WalletRoute: WalletRoute,
   WelcomeRoute: WelcomeRoute,
+  WorkerOnboardingRoute: WorkerOnboardingRoute,
   DisputeJobIdRoute: DisputeJobIdRoute,
   JobsJobIdRoute: JobsJobIdRoute,
   RateJobIdRoute: RateJobIdRoute,

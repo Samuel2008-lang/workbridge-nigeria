@@ -55,6 +55,12 @@ function PostJobScreen() {
         navigate({ to: "/login" });
         return;
       }
+      const { data: ack } = await supabase.from("onboarding_acknowledgements")
+        .select("id").eq("user_id", user.id).eq("type", "client_onboarding").is("job_id", null).maybeSingle();
+      if (!ack) {
+        navigate({ to: "/client-onboarding" });
+        return;
+      }
       const fullDescription = details
         ? `${title}\n\n${details}\n\nTiming: ${timing} · Workers needed: ${workers}`
         : `${title}\n\nTiming: ${timing} · Workers needed: ${workers}`;
