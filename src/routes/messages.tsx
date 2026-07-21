@@ -3,6 +3,7 @@ import { MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { useProfile } from "@/hooks/use-profile";
 
 export const Route = createFileRoute("/messages")({
   head: () => ({ meta: [{ title: "Messages — WorkBridge" }] }),
@@ -19,13 +20,16 @@ type Thread = {
 };
 
 function MessagesScreen() {
+  const { preferredMode } = useProfile();
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         if (active) setLoading(false);
         return;
@@ -68,7 +72,9 @@ function MessagesScreen() {
           .select("id, full_name")
           .in("id", otherIds);
         const nameMap = new Map((profiles ?? []).map((p) => [p.id, p.full_name as string]));
-        map.forEach((t) => { if (nameMap.get(t.otherId)) t.otherName = nameMap.get(t.otherId)!; });
+        map.forEach((t) => {
+          if (nameMap.get(t.otherId)) t.otherName = nameMap.get(t.otherId)!;
+        });
       }
 
       if (active) {
@@ -80,6 +86,8 @@ function MessagesScreen() {
       active = false;
     };
   }, []);
+
+  const isFindWork = preferredMode !== "client";
 
   return (
     <MobileShell>
@@ -97,14 +105,16 @@ function MessagesScreen() {
               <MessageCircle className="h-8 w-8 text-muted-foreground" />
             </div>
             <p className="font-semibold text-foreground">No messages yet</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Once you apply to or post a job, conversations will appear here.
+            <p className="text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
+              {isFindWork
+                ? "Apply to a job to start chatting"
+                : "Post a job to start receiving applications and chatting with workers"}
             </p>
             <Link
-              to="/search"
+              to={isFindWork ? "/search" : "/post-job"}
               className="inline-block mt-4 px-5 h-11 leading-[44px] rounded-full bg-primary text-primary-foreground text-sm font-semibold"
             >
-              Find a job
+              {isFindWork ? "Find a Job" : "Post a Job"}
             </Link>
           </div>
         ) : (
@@ -133,7 +143,9 @@ function MessagesScreen() {
               );
               return t.jobId ? (
                 <li key={`${t.jobId}:${t.otherId}`}>
-                  <Link to="/chat/$jobId/$otherId" params={{ jobId: t.jobId, otherId: t.otherId }}>{inner}</Link>
+                  <Link to="/chat/$jobId/$otherId" params={{ jobId: t.jobId, otherId: t.otherId }}>
+                    {inner}
+                  </Link>
                 </li>
               ) : (
                 <li key={`none:${t.otherId}`}>{inner}</li>

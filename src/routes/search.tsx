@@ -52,13 +52,20 @@ function SearchScreen() {
   useEffect(() => {
     let active = true;
     (async () => {
-      // All open jobs — never hide by distance
-      const { data } = await supabase
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      // All open jobs except ones the current user posted
+      let q = supabase
         .from("jobs")
         .select("id, title, description, type, location, latitude, longitude, budget_min, budget_max, status, created_at")
         .eq("status", "open")
         .order("created_at", { ascending: false })
         .limit(200);
+      if (user) {
+        q = q.neq("client_id", user.id);
+      }
+      const { data } = await q;
       if (active) {
         setJobs((data ?? []) as Job[]);
         setLoading(false);

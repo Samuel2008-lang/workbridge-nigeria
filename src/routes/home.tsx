@@ -107,13 +107,17 @@ function HomeScreen() {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Show ALL open jobs — no distance-based hiding
-      const { data: jobRows } = await supabase
+      // Open jobs only; never show jobs the current user posted (Find Work mode)
+      let jobsQuery = supabase
         .from("jobs")
         .select("id, title, description, type, location, latitude, longitude, budget_min, budget_max, created_at")
         .eq("status", "open")
         .order("created_at", { ascending: false })
         .limit(100);
+      if (user) {
+        jobsQuery = jobsQuery.neq("client_id", user.id);
+      }
+      const { data: jobRows } = await jobsQuery;
       if (active) {
         setJobs((jobRows ?? []) as JobRow[]);
         setLoadingJobs(false);

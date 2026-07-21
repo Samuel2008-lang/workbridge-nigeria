@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ClientOnboardingRouteImport } from './routes/client-onboarding'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as JobInterestsRouteImport } from './routes/job-interests'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MessagesRouteImport } from './routes/messages'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -50,6 +51,11 @@ const ClientOnboardingRoute = ClientOnboardingRouteImport.update({
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobInterestsRoute = JobInterestsRouteImport.update({
+  id: '/job-interests',
+  path: '/job-interests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
+  '/job-interests': typeof JobInterestsRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
+  '/job-interests': typeof JobInterestsRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/client-onboarding': typeof ClientOnboardingRoute
   '/home': typeof HomeRoute
+  '/job-interests': typeof JobInterestsRoute
   '/login': typeof LoginRoute
   '/messages': typeof MessagesRoute
   '/notifications': typeof NotificationsRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/client-onboarding'
     | '/home'
+    | '/job-interests'
     | '/login'
     | '/messages'
     | '/notifications'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/client-onboarding'
     | '/home'
+    | '/job-interests'
     | '/login'
     | '/messages'
     | '/notifications'
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/client-onboarding'
     | '/home'
+    | '/job-interests'
     | '/login'
     | '/messages'
     | '/notifications'
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ClientOnboardingRoute: typeof ClientOnboardingRoute
   HomeRoute: typeof HomeRoute
+  JobInterestsRoute: typeof JobInterestsRoute
   LoginRoute: typeof LoginRoute
   MessagesRoute: typeof MessagesRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/job-interests': {
+      id: '/job-interests'
+      path: '/job-interests'
+      fullPath: '/job-interests'
+      preLoaderRoute: typeof JobInterestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -480,6 +500,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ClientOnboardingRoute: ClientOnboardingRoute,
   HomeRoute: HomeRoute,
+  JobInterestsRoute: JobInterestsRoute,
   LoginRoute: LoginRoute,
   MessagesRoute: MessagesRoute,
   NotificationsRoute: NotificationsRoute,

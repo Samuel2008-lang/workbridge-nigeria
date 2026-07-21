@@ -119,7 +119,7 @@ function SettingsScreen() {
           <p className="text-xs text-muted-foreground mb-3">
             Select all that apply. Jobs matching these appear first in your feed.
           </p>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {JOB_INTEREST_OPTIONS.map((opt) => {
               const selected = interests.includes(opt.id);
               return (
@@ -128,14 +128,16 @@ function SettingsScreen() {
                   type="button"
                   onClick={() => toggleInterest(opt.id)}
                   className={cn(
-                    "flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all",
+                    "rounded-2xl border-2 p-4 text-left transition-all min-h-[100px]",
                     selected
                       ? "border-primary bg-primary-soft"
                       : "border-border bg-card",
                   )}
                 >
-                  <span className="text-2xl">{opt.emoji}</span>
-                  <span className="text-sm font-semibold text-foreground">{opt.label}</span>
+                  <span className="text-2xl block mb-2">{opt.emoji}</span>
+                  <span className="text-sm font-semibold text-foreground leading-snug">
+                    {opt.label}
+                  </span>
                 </button>
               );
             })}

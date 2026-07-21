@@ -163,7 +163,7 @@ export function LocationMap({
           type="text"
           value={location}
           onChange={(e) => onLocationChange(e.target.value)}
-          placeholder="City or area e.g. Ikeja, Lagos"
+          placeholder="Enter your city or area"
           className="w-full h-14 pl-12 pr-4 rounded-2xl border-2 border-border bg-card text-base focus:border-primary outline-none"
         />
       </div>

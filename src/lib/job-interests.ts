@@ -45,7 +45,7 @@ export const JOB_INTEREST_OPTIONS = [
   {
     id: "caregiving_teaching",
     label: "Caregiving and Teaching",
-    emoji: "🤝",
+    emoji: "👶",
     keywords: ["care", "teach", "tutor", "nanny", "child", "elder", "lesson"],
   },
 ] as const;
