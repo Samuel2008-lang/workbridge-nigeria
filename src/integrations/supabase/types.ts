@@ -387,9 +387,11 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          job_interests: string[] | null
           language: string | null
           location: string | null
           phone_number: string | null
+          preferred_mode: Database["public"]["Enums"]["preferred_mode"] | null
           profile_photo: string | null
           role: Database["public"]["Enums"]["user_role"] | null
           updated_at: string
@@ -401,9 +403,11 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          job_interests?: string[] | null
           language?: string | null
           location?: string | null
           phone_number?: string | null
+          preferred_mode?: Database["public"]["Enums"]["preferred_mode"] | null
           profile_photo?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string
@@ -415,13 +419,48 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          job_interests?: string[] | null
           language?: string | null
           location?: string | null
           phone_number?: string | null
+          preferred_mode?: Database["public"]["Enums"]["preferred_mode"] | null
           profile_photo?: string | null
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string
           worker_rating?: number
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          user_id: string
+          push_notifications: boolean
+          email_notifications: boolean
+          sms_notifications: boolean
+          show_distance: boolean
+          dark_mode: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          push_notifications?: boolean
+          email_notifications?: boolean
+          sms_notifications?: boolean
+          show_distance?: boolean
+          dark_mode?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          push_notifications?: boolean
+          email_notifications?: boolean
+          sms_notifications?: boolean
+          show_distance?: boolean
+          dark_mode?: boolean
+          created_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -676,6 +715,7 @@ export type Database = {
         | "cash_agreed"
         | "cash_declined"
       onboarding_type: "worker_prejob" | "client_onboarding"
+      preferred_mode: "worker" | "client"
       review_status: "pending" | "published" | "held" | "removed" | "disputed"
       transaction_status: "pending" | "completed" | "failed"
       transaction_type: "escrow" | "release" | "withdrawal" | "deposit"
@@ -848,6 +888,7 @@ export const Constants = {
         "cash_declined",
       ],
       onboarding_type: ["worker_prejob", "client_onboarding"],
+      preferred_mode: ["worker", "client"],
       review_status: ["pending", "published", "held", "removed", "disputed"],
       transaction_status: ["pending", "completed", "failed"],
       transaction_type: ["escrow", "release", "withdrawal", "deposit"],

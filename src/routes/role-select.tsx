@@ -27,6 +27,7 @@ function RoleSelectScreen() {
 
   const handleContinue = () => {
     if (!selected) return;
+    // Sets preferred starting mode only — one account supports both roles
     navigate({ to: "/signup", search: { role: selected } });
   };
 
@@ -39,8 +40,10 @@ function RoleSelectScreen() {
         <p className="text-sm font-medium text-muted-foreground">Step 1 of 3</p>
       </div>
 
-      <h1 className="text-3xl font-bold text-foreground mb-2">Who are you joining as?</h1>
-      <p className="text-base text-muted-foreground mb-8">You can always switch later</p>
+      <h1 className="text-3xl font-bold text-foreground mb-2">How will you start?</h1>
+      <p className="text-base text-muted-foreground mb-8">
+        One account for both. You can switch between Worker and Client mode anytime.
+      </p>
 
       <div className="flex-1 space-y-4">
         {cards.map((card) => {

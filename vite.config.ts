@@ -9,7 +9,18 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
     server: { entry: "server" },
+    // Custom client entry supports Capacitor SPA shell (createRoot) while keeping
+    // hydrateRoot for normal SSR / preview deploys. Resolved relative to src/.
+    client: { entry: "./client" },
+  },
+  // Keep Nitro for Cloudflare-compatible server output (.output/).
+  // Capacitor packages the public static assets from .output/public (see capacitor.config.ts).
+  nitro: {
+    output: {
+      dir: ".output",
+      publicDir: ".output/public",
+      serverDir: ".output/server",
+    },
   },
 });

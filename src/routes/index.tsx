@@ -52,7 +52,7 @@ function SplashScreen() {
     >
       {/* Logo */}
       <img
-        src="/__l5e/assets-v1/cd15fc17-e5a9-4bdc-a4a5-99380f3b47b0/workbridge-logo.png"
+        src="/workbridge-logo.png"
         alt="WorkBridge"
         className="h-[100px] w-[100px] rounded-2xl animate-pulse-gentle"
       />

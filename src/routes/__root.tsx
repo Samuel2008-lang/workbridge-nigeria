@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -88,8 +89,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
     ],
     links: [
-      { rel: "icon", type: "image/png", href: "/__l5e/assets-v1/cd15fc17-e5a9-4bdc-a4a5-99380f3b47b0/workbridge-logo.png" },
-      { rel: "apple-touch-icon", href: "/__l5e/assets-v1/cd15fc17-e5a9-4bdc-a4a5-99380f3b47b0/workbridge-logo.png" },
+      { rel: "icon", type: "image/png", href: "/workbridge-logo.png" },
+      { rel: "apple-touch-icon", href: "/workbridge-logo.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" },
@@ -103,6 +104,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  // Capacitor serves a static SPA shell (#root). Nesting <html>/<body> inside
+  // #root is invalid — render children only and let the outer shell own the document.
+  const isCapacitorShell =
+    typeof document !== "undefined" &&
+    document.documentElement.dataset.capacitorShell === "true";
+
+  if (isCapacitorShell) {
+    return <>{children}</>;
+  }
+
   return (
     <html lang="en">
       <head>
@@ -123,6 +134,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
 }

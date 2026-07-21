@@ -3,6 +3,9 @@ import { Search as SearchIcon, MapPin } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
 import { supabase } from "@/integrations/supabase/client";
+import { useProfile } from "@/hooks/use-profile";
+import { scoreJobAgainstInterests } from "@/lib/job-interests";
+import { formatDistanceKm, haversineKm } from "@/lib/distance";
 
 export const Route = createFileRoute("/search")({
   head: () => ({ meta: [{ title: "Search Jobs — WorkBridge" }] }),
@@ -15,6 +18,8 @@ type Job = {
   description: string | null;
   type: "digital" | "physical";
   location: string | null;
+  latitude: number | null;
+  longitude: number | null;
   budget_min: number | null;
   budget_max: number | null;
   status: string;
@@ -27,20 +32,33 @@ function formatNaira(n: number | null) {
 }
 
 function SearchScreen() {
+  const { profile } = useProfile();
   const [query, setQuery] = useState("");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "digital" | "physical">("all");
+  const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
+
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => setUserCoords(null),
+        { maximumAge: 600_000, timeout: 8000 },
+      );
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
     (async () => {
+      // All open jobs — never hide by distance
       const { data } = await supabase
         .from("jobs")
-        .select("id, title, description, type, location, budget_min, budget_max, status, created_at")
+        .select("id, title, description, type, location, latitude, longitude, budget_min, budget_max, status, created_at")
         .eq("status", "open")
         .order("created_at", { ascending: false })
-        .limit(100);
+        .limit(200);
       if (active) {
         setJobs((data ?? []) as Job[]);
         setLoading(false);
@@ -51,18 +69,47 @@ function SearchScreen() {
     };
   }, []);
 
-  const filtered = useMemo(() => {
+  const ranked = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return jobs.filter((j) => {
-      if (filter !== "all" && j.type !== filter) return false;
-      if (!q) return true;
-      return (
-        j.title.toLowerCase().includes(q) ||
-        (j.description ?? "").toLowerCase().includes(q) ||
-        (j.location ?? "").toLowerCase().includes(q)
-      );
-    });
-  }, [jobs, query, filter]);
+    const interests = profile?.job_interests ?? [];
+    return jobs
+      .filter((j) => {
+        if (filter !== "all" && j.type !== filter) return false;
+        if (!q) return true;
+        return (
+          j.title.toLowerCase().includes(q) ||
+          (j.description ?? "").toLowerCase().includes(q) ||
+          (j.location ?? "").toLowerCase().includes(q)
+        );
+      })
+      .map((j) => {
+        let distanceKm: number | null = null;
+        if (
+          userCoords &&
+          j.latitude != null &&
+          j.longitude != null &&
+          !Number.isNaN(Number(j.latitude))
+        ) {
+          distanceKm = haversineKm(
+            userCoords.lat,
+            userCoords.lon,
+            Number(j.latitude),
+            Number(j.longitude),
+          );
+        }
+        const interestScore = scoreJobAgainstInterests(j.title, j.description, interests);
+        const nearScore =
+          distanceKm == null ? 0 : distanceKm < 5 ? 30 : distanceKm < 20 ? 15 : distanceKm < 50 ? 5 : 0;
+        return { job: j, distanceKm, rank: interestScore * 10 + nearScore };
+      })
+      .sort((a, b) => {
+        if (b.rank !== a.rank) return b.rank - a.rank;
+        if (a.distanceKm != null && b.distanceKm != null) return a.distanceKm - b.distanceKm;
+        if (a.distanceKm != null) return -1;
+        if (b.distanceKm != null) return 1;
+        return 0;
+      });
+  }, [jobs, query, filter, profile?.job_interests, userCoords]);
 
   return (
     <MobileShell>
@@ -98,12 +145,12 @@ function SearchScreen() {
       <div className="px-5 py-5 space-y-3">
         {loading ? (
           <p className="text-center text-sm text-muted-foreground py-10">Loading jobs…</p>
-        ) : filtered.length === 0 ? (
+        ) : ranked.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-sm text-muted-foreground">No jobs match your search.</p>
           </div>
         ) : (
-          filtered.map((j) => (
+          ranked.map(({ job: j, distanceKm }) => (
             <Link
               key={j.id}
               to="/jobs/$jobId"
@@ -119,7 +166,7 @@ function SearchScreen() {
               {j.description && (
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{j.description}</p>
               )}
-              <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground flex-wrap">
                 <span className="capitalize px-2 py-0.5 rounded-full bg-muted font-semibold">
                   {j.type}
                 </span>
@@ -129,6 +176,7 @@ function SearchScreen() {
                     {j.location}
                   </span>
                 )}
+                <span className="font-medium">{formatDistanceKm(distanceKm)}</span>
               </div>
             </Link>
           ))

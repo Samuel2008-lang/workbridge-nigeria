@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">WorkBridge</string>
+    <string name="title_activity_main">WorkBridge</string>
+    <string name="package_name">ng.workbridge.app</string>
+    <string name="custom_url_scheme">ng.workbridge.app</string>
+</resources>

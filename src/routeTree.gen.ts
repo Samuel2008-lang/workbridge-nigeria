@@ -9,101 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WorkerOnboardingRouteImport } from './routes/worker-onboarding'
-import { Route as WelcomeRouteImport } from './routes/welcome'
-import { Route as WalletRouteImport } from './routes/wallet'
-import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as SearchRouteImport } from './routes/search'
-import { Route as RoleSelectRouteImport } from './routes/role-select'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PostJobSuccessRouteImport } from './routes/post-job-success'
-import { Route as PostJobRouteImport } from './routes/post-job'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as MessagesRouteImport } from './routes/messages'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as HomeRouteImport } from './routes/home'
-import { Route as ClientOnboardingRouteImport } from './routes/client-onboarding'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RateJobIdRouteImport } from './routes/rate.$jobId'
-import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ClientOnboardingRouteImport } from './routes/client-onboarding'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MessagesRouteImport } from './routes/messages'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as PostJobRouteImport } from './routes/post-job'
+import { Route as PostJobSuccessRouteImport } from './routes/post-job-success'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as RoleSelectRouteImport } from './routes/role-select'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as VerifyOtpRouteImport } from './routes/verify-otp'
+import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as WorkerOnboardingRouteImport } from './routes/worker-onboarding'
 import { Route as DisputeJobIdRouteImport } from './routes/dispute.$jobId'
+import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
+import { Route as RateJobIdRouteImport } from './routes/rate.$jobId'
 import { Route as ChatJobIdOtherIdRouteImport } from './routes/chat.$jobId.$otherId'
 
-const WorkerOnboardingRoute = WorkerOnboardingRouteImport.update({
-  id: '/worker-onboarding',
-  path: '/worker-onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WelcomeRoute = WelcomeRouteImport.update({
-  id: '/welcome',
-  path: '/welcome',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WalletRoute = WalletRouteImport.update({
-  id: '/wallet',
-  path: '/wallet',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VerifyOtpRoute = VerifyOtpRouteImport.update({
-  id: '/verify-otp',
-  path: '/verify-otp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RoleSelectRoute = RoleSelectRouteImport.update({
-  id: '/role-select',
-  path: '/role-select',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PostJobSuccessRoute = PostJobSuccessRouteImport.update({
-  id: '/post-job-success',
-  path: '/post-job-success',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PostJobRoute = PostJobRouteImport.update({
-  id: '/post-job',
-  path: '/post-job',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MessagesRoute = MessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeRoute = HomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientOnboardingRoute = ClientOnboardingRouteImport.update({
-  id: '/client-onboarding',
-  path: '/client-onboarding',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -111,14 +42,89 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ClientOnboardingRoute = ClientOnboardingRouteImport.update({
+  id: '/client-onboarding',
+  path: '/client-onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RateJobIdRoute = RateJobIdRouteImport.update({
-  id: '/rate/$jobId',
-  path: '/rate/$jobId',
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MessagesRoute = MessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostJobRoute = PostJobRouteImport.update({
+  id: '/post-job',
+  path: '/post-job',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PostJobSuccessRoute = PostJobSuccessRouteImport.update({
+  id: '/post-job-success',
+  path: '/post-job-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoleSelectRoute = RoleSelectRouteImport.update({
+  id: '/role-select',
+  path: '/role-select',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyOtpRoute = VerifyOtpRouteImport.update({
+  id: '/verify-otp',
+  path: '/verify-otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkerOnboardingRoute = WorkerOnboardingRouteImport.update({
+  id: '/worker-onboarding',
+  path: '/worker-onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DisputeJobIdRoute = DisputeJobIdRouteImport.update({
+  id: '/dispute/$jobId',
+  path: '/dispute/$jobId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JobsJobIdRoute = JobsJobIdRouteImport.update({
@@ -126,9 +132,9 @@ const JobsJobIdRoute = JobsJobIdRouteImport.update({
   path: '/jobs/$jobId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DisputeJobIdRoute = DisputeJobIdRouteImport.update({
-  id: '/dispute/$jobId',
-  path: '/dispute/$jobId',
+const RateJobIdRoute = RateJobIdRouteImport.update({
+  id: '/rate/$jobId',
+  path: '/rate/$jobId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatJobIdOtherIdRoute = ChatJobIdOtherIdRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/role-select': typeof RoleSelectRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/role-select': typeof RoleSelectRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/role-select': typeof RoleSelectRoute
   '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/verify-otp': typeof VerifyOtpRoute
   '/wallet': typeof WalletRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/role-select'
     | '/search'
+    | '/settings'
     | '/signup'
     | '/verify-otp'
     | '/wallet'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/role-select'
     | '/search'
+    | '/settings'
     | '/signup'
     | '/verify-otp'
     | '/wallet'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/role-select'
     | '/search'
+    | '/settings'
     | '/signup'
     | '/verify-otp'
     | '/wallet'
@@ -292,6 +304,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   RoleSelectRoute: typeof RoleSelectRoute
   SearchRoute: typeof SearchRoute
+  SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   VerifyOtpRoute: typeof VerifyOtpRoute
   WalletRoute: typeof WalletRoute
@@ -305,109 +318,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/worker-onboarding': {
-      id: '/worker-onboarding'
-      path: '/worker-onboarding'
-      fullPath: '/worker-onboarding'
-      preLoaderRoute: typeof WorkerOnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/welcome': {
-      id: '/welcome'
-      path: '/welcome'
-      fullPath: '/welcome'
-      preLoaderRoute: typeof WelcomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/wallet': {
-      id: '/wallet'
-      path: '/wallet'
-      fullPath: '/wallet'
-      preLoaderRoute: typeof WalletRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/verify-otp': {
-      id: '/verify-otp'
-      path: '/verify-otp'
-      fullPath: '/verify-otp'
-      preLoaderRoute: typeof VerifyOtpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/role-select': {
-      id: '/role-select'
-      path: '/role-select'
-      fullPath: '/role-select'
-      preLoaderRoute: typeof RoleSelectRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/post-job-success': {
-      id: '/post-job-success'
-      path: '/post-job-success'
-      fullPath: '/post-job-success'
-      preLoaderRoute: typeof PostJobSuccessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/post-job': {
-      id: '/post-job'
-      path: '/post-job'
-      fullPath: '/post-job'
-      preLoaderRoute: typeof PostJobRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/messages': {
-      id: '/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof MessagesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home': {
-      id: '/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof HomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client-onboarding': {
-      id: '/client-onboarding'
-      path: '/client-onboarding'
-      fullPath: '/client-onboarding'
-      preLoaderRoute: typeof ClientOnboardingRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -417,18 +332,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/client-onboarding': {
+      id: '/client-onboarding'
+      path: '/client-onboarding'
+      fullPath: '/client-onboarding'
+      preLoaderRoute: typeof ClientOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rate/$jobId': {
-      id: '/rate/$jobId'
-      path: '/rate/$jobId'
-      fullPath: '/rate/$jobId'
-      preLoaderRoute: typeof RateJobIdRouteImport
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/messages': {
+      id: '/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof MessagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/post-job': {
+      id: '/post-job'
+      path: '/post-job'
+      fullPath: '/post-job'
+      preLoaderRoute: typeof PostJobRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/post-job-success': {
+      id: '/post-job-success'
+      path: '/post-job-success'
+      fullPath: '/post-job-success'
+      preLoaderRoute: typeof PostJobSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/role-select': {
+      id: '/role-select'
+      path: '/role-select'
+      fullPath: '/role-select'
+      preLoaderRoute: typeof RoleSelectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-otp': {
+      id: '/verify-otp'
+      path: '/verify-otp'
+      fullPath: '/verify-otp'
+      preLoaderRoute: typeof VerifyOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/worker-onboarding': {
+      id: '/worker-onboarding'
+      path: '/worker-onboarding'
+      fullPath: '/worker-onboarding'
+      preLoaderRoute: typeof WorkerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dispute/$jobId': {
+      id: '/dispute/$jobId'
+      path: '/dispute/$jobId'
+      fullPath: '/dispute/$jobId'
+      preLoaderRoute: typeof DisputeJobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jobs/$jobId': {
@@ -438,11 +458,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobsJobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dispute/$jobId': {
-      id: '/dispute/$jobId'
-      path: '/dispute/$jobId'
-      fullPath: '/dispute/$jobId'
-      preLoaderRoute: typeof DisputeJobIdRouteImport
+    '/rate/$jobId': {
+      id: '/rate/$jobId'
+      path: '/rate/$jobId'
+      fullPath: '/rate/$jobId'
+      preLoaderRoute: typeof RateJobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat/$jobId/$otherId': {
@@ -468,6 +488,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   RoleSelectRoute: RoleSelectRoute,
   SearchRoute: SearchRoute,
+  SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   VerifyOtpRoute: VerifyOtpRoute,
   WalletRoute: WalletRoute,
@@ -481,3 +502,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
