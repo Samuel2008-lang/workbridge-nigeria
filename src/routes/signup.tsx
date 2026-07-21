@@ -57,15 +57,31 @@ function SignupScreen() {
       : "";
 
   const passwordErrors: string[] = [];
-  if (password.length < 8) passwordErrors.push("At least 8 characters");
-  if (!/[A-Za-z]/.test(password)) passwordErrors.push("Include a letter");
-  if (!/[0-9]/.test(password)) passwordErrors.push("Include a number");
+  if (password.length < 6) passwordErrors.push("Password must be at least 6 characters");
 
   const fullNameError = !fullName.trim() ? "Full name is required" : "";
   const cityError = !city.trim() ? "City is required" : "";
 
   const canSubmitDetails =
     !fullNameError && !emailError && passwordErrors.length === 0 && !cityError;
+
+  function formatSignupError(err: unknown): string {
+    const raw =
+      err && typeof err === "object" && "message" in err
+        ? String((err as { message?: string }).message ?? "")
+        : err instanceof Error
+          ? err.message
+          : String(err ?? "");
+    console.error("[signup] Supabase/auth error:", err);
+    if (/already|registered|exists|User already/i.test(raw)) {
+      return "An account with this email already exists. Please log in.";
+    }
+    if (/password.*(6|least|short|weak)|least 6/i.test(raw)) {
+      return "Password must be at least 6 characters";
+    }
+    // Always surface the real message — never a generic fallback
+    return raw.trim() || "Sign up failed. Please try again.";
+  }
 
   const inputClass = cn(
     "w-full h-14 rounded-2xl border-2 border-border bg-card px-4 text-base text-foreground",
@@ -94,54 +110,82 @@ function SignupScreen() {
       toast.error("Select at least one job interest");
       return;
     }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
     if (loading) return;
     setLoading(true);
     try {
       const firstName = fullName.trim().split(/\s+/)[0] ?? fullName.trim();
+      const meta = {
+        full_name: fullName.trim(),
+        first_name: firstName,
+        phone,
+        city,
+        language,
+        role: role === "poster" ? "client" : role ?? "worker",
+        preferred_mode: preferredMode,
+        job_interests: interests,
+      };
+
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/home`,
-          data: {
-            full_name: fullName.trim(),
-            first_name: firstName,
-            phone,
-            city,
-            language,
-            role: role === "poster" ? "client" : role ?? "worker",
-            preferred_mode: preferredMode,
-            job_interests: interests,
-          },
+          data: meta,
         },
       });
+
       if (error) {
-        if (/already|registered|exists/i.test(error.message)) {
-          toast.error("An account with this email already exists. Please log in instead.");
-          return;
-        }
-        throw error;
-      }
-      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-        toast.error("An account with this email already exists. Please log in instead.");
+        console.error("[signup] signUp error:", error);
+        toast.error(formatSignupError(error));
         return;
       }
 
-      // Ensure profile row has full fields (covers cases where trigger lags or session exists)
+      // Supabase returns a user with empty identities when the email is already registered
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        console.error("[signup] email already registered (empty identities)");
+        toast.error("An account with this email already exists. Please log in.");
+        return;
+      }
+
+      // Best-effort profile upsert (trigger also creates the row). Never fail signup on this.
       if (data.user) {
-        await supabase.from("profiles").upsert(
-          {
-            id: data.user.id,
-            full_name: fullName.trim(),
-            phone_number: phone || null,
-            location: city || null,
-            language,
-            job_interests: interests,
-            preferred_mode: preferredMode,
-            role: role === "poster" ? "client" : role === "worker" ? "worker" : null,
-          },
-          { onConflict: "id" },
-        );
+        const profilePayload = {
+          id: data.user.id,
+          full_name: fullName.trim(),
+          phone_number: phone || null,
+          location: city || null,
+          language,
+          job_interests: interests,
+          preferred_mode: preferredMode,
+          role: (role === "poster" ? "client" : role === "worker" ? "worker" : null) as
+            | "worker"
+            | "client"
+            | null,
+        };
+        const { error: profileErr } = await supabase
+          .from("profiles")
+          .upsert(profilePayload, { onConflict: "id" });
+        if (profileErr) {
+          console.error("[signup] profile upsert error (non-fatal):", profileErr);
+          // Retry without columns that may not exist yet on older DBs
+          const { error: basicErr } = await supabase.from("profiles").upsert(
+            {
+              id: data.user.id,
+              full_name: fullName.trim(),
+              phone_number: phone || null,
+              location: city || null,
+              language,
+            },
+            { onConflict: "id" },
+          );
+          if (basicErr) {
+            console.error("[signup] basic profile upsert error (non-fatal):", basicErr);
+          }
+        }
       }
 
       if (typeof window !== "undefined") {
@@ -163,8 +207,8 @@ function SignupScreen() {
       toast.success("Account created");
       navigate({ to: "/home" });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Something went wrong";
-      toast.error(msg);
+      console.error("[signup] unexpected error:", err);
+      toast.error(formatSignupError(err));
     } finally {
       setLoading(false);
     }
@@ -236,7 +280,7 @@ function SignupScreen() {
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 8 characters, with a letter and number"
+                  placeholder="At least 6 characters"
                   className={cn(inputClass, "pr-12")}
                 />
                 <button

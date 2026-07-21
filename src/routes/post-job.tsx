@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Monitor, Wrench, MapPin, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Monitor, Wrench, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { LocationMap, type MapCoords } from "@/components/LocationMap";
 
 export const Route = createFileRoute("/post-job")({
   head: () => ({
@@ -25,7 +26,8 @@ function PostJobScreen() {
   const [title, setTitle] = useState("");
   const [workType, setWorkType] = useState<WorkType | null>(null);
   const [timing, setTiming] = useState<Timing>("today");
-  const [location, setLocation] = useState("Lagos, Nigeria");
+  const [location, setLocation] = useState("");
+  const [coords, setCoords] = useState<MapCoords | null>(null);
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
   const [details, setDetails] = useState("");
@@ -35,28 +37,41 @@ function PostJobScreen() {
 
   const titleError = !title.trim() ? "Describe the job" : "";
   const workTypeError = !workType ? "Pick the type of work" : "";
-  const budgetError =
-    !budgetMin || !budgetMax
-      ? "Enter both minimum and maximum"
-      : Number(budgetMin) > Number(budgetMax)
-        ? "Minimum cannot exceed maximum"
-        : "";
+  const locationError =
+    workType === "physical" && !location.trim() ? "Enter a city or area" : "";
 
-  const canSubmit = !titleError && !workTypeError && !budgetError;
+  // Budget only required for digital jobs
+  const budgetError =
+    workType === "digital"
+      ? !budgetMin || !budgetMax
+        ? "Enter both minimum and maximum"
+        : Number(budgetMin) > Number(budgetMax)
+          ? "Minimum cannot exceed maximum"
+          : ""
+      : "";
+
+  const canSubmit = !titleError && !workTypeError && !budgetError && !locationError;
 
   const handleSubmit = async () => {
     setShowErrors(true);
     if (!canSubmit || loading) return;
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         toast.error("Please log in to post a job");
         navigate({ to: "/login" });
         return;
       }
-      const { data: ack } = await supabase.from("onboarding_acknowledgements")
-        .select("id").eq("user_id", user.id).eq("type", "client_onboarding").is("job_id", null).maybeSingle();
+      const { data: ack } = await supabase
+        .from("onboarding_acknowledgements")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("type", "client_onboarding")
+        .is("job_id", null)
+        .maybeSingle();
       if (!ack) {
         navigate({ to: "/client-onboarding" });
         return;
@@ -64,19 +79,28 @@ function PostJobScreen() {
       const fullDescription = details
         ? `${title}\n\n${details}\n\nTiming: ${timing} · Workers needed: ${workers}`
         : `${title}\n\nTiming: ${timing} · Workers needed: ${workers}`;
+
+      const isPhysical = workType === "physical";
       const { error } = await supabase.from("jobs").insert({
         client_id: user.id,
         title,
         description: fullDescription,
         type: workType!,
-        location,
-        budget_min: Number(budgetMin),
-        budget_max: Number(budgetMax),
+        location: location.trim() || null,
+        latitude: isPhysical && coords ? coords.lat : null,
+        longitude: isPhysical && coords ? coords.lon : null,
+        // Physical jobs: workers quote — no fixed budget
+        budget_min: isPhysical ? null : Number(budgetMin),
+        budget_max: isPhysical ? null : Number(budgetMax),
         status: "open",
       });
-      if (error) throw error;
+      if (error) {
+        console.error("[post-job] insert error:", error);
+        throw error;
+      }
       navigate({ to: "/post-job-success" });
     } catch (err) {
+      console.error("[post-job] failed:", err);
       toast.error(err instanceof Error ? err.message : "Could not post job");
     } finally {
       setLoading(false);
@@ -85,7 +109,6 @@ function PostJobScreen() {
 
   return (
     <div className="min-h-screen bg-background pb-32">
-      {/* Header */}
       <header
         className="px-5 pt-7 pb-6 text-white"
         style={{ background: "linear-gradient(180deg, #0F4A32 0%, #1A6B4A 100%)" }}
@@ -100,7 +123,6 @@ function PostJobScreen() {
       </header>
 
       <div className="px-5 pt-6 space-y-6">
-        {/* 1. Description */}
         <Field label="What do you need done?" error={showErrors ? titleError : ""}>
           <textarea
             value={title}
@@ -111,7 +133,6 @@ function PostJobScreen() {
           />
         </Field>
 
-        {/* 2. Type of work */}
         <Field label="Type of work" error={showErrors ? workTypeError : ""}>
           <div className="grid grid-cols-2 gap-3">
             <TypeCard
@@ -131,16 +152,18 @@ function PostJobScreen() {
           </div>
         </Field>
 
-        {/* 3. Timing */}
         <Field label="When do you need it?">
           <div className="flex gap-2">
-            {([
-              { id: "today", label: "Today" },
-              { id: "week", label: "This Week" },
-              { id: "flexible", label: "Flexible" },
-            ] as const).map((t) => (
+            {(
+              [
+                { id: "today", label: "Today" },
+                { id: "week", label: "This Week" },
+                { id: "flexible", label: "Flexible" },
+              ] as const
+            ).map((t) => (
               <button
                 key={t.id}
+                type="button"
                 onClick={() => setTiming(t.id)}
                 className={cn(
                   "flex-1 h-11 rounded-full border-2 text-sm font-semibold transition-colors",
@@ -155,51 +178,33 @@ function PostJobScreen() {
           </div>
         </Field>
 
-        {/* 4. Location */}
-        <Field label="Your location">
-          <div className="relative">
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full h-14 pl-12 pr-4 rounded-2xl border-2 border-border bg-card text-base focus:border-primary outline-none"
+        {/* Location + map only for physical jobs */}
+        {workType === "physical" && (
+          <Field label="Your location" error={showErrors ? locationError : ""}>
+            <LocationMap
+              location={location}
+              onLocationChange={setLocation}
+              onCoordsChange={setCoords}
             />
-          </div>
-          <div className="mt-2 h-32 rounded-2xl overflow-hidden border border-border bg-muted relative">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage:
-                  "linear-gradient(#d4e1d8 1px, transparent 1px), linear-gradient(90deg, #d4e1d8 1px, transparent 1px)",
-                backgroundSize: "20px 20px",
-              }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
-                <MapPin className="h-5 w-5 text-primary" fill="currentColor" />
-              </div>
+          </Field>
+        )}
+
+        {/* Digital: budget fields. Physical: quote info box (no min/max). */}
+        {workType === "digital" && (
+          <Field label="Your budget" error={showErrors ? budgetError : ""}>
+            <div className="grid grid-cols-2 gap-3">
+              <BudgetInput label="Minimum" value={budgetMin} onChange={setBudgetMin} />
+              <BudgetInput label="Maximum" value={budgetMax} onChange={setBudgetMax} />
             </div>
-          </div>
-        </Field>
+          </Field>
+        )}
 
-        {/* 5. Budget */}
-        <Field label="Your budget" error={showErrors ? budgetError : ""}>
-          <div className="grid grid-cols-2 gap-3">
-            <BudgetInput
-              label="Minimum"
-              value={budgetMin}
-              onChange={setBudgetMin}
-            />
-            <BudgetInput
-              label="Maximum"
-              value={budgetMax}
-              onChange={setBudgetMax}
-            />
+        {workType === "physical" && (
+          <div className="rounded-2xl border border-border bg-muted/70 px-4 py-3.5 text-sm text-muted-foreground leading-relaxed">
+            💡 No price needed — workers will send you their quotes. You choose the best offer.
           </div>
-        </Field>
+        )}
 
-        {/* 6. More details */}
         <Field label="More details (optional)">
           <textarea
             value={details}
@@ -210,10 +215,10 @@ function PostJobScreen() {
           />
         </Field>
 
-        {/* 7. Workers count */}
         <Field label="How many workers do you need?">
           <div className="flex items-center justify-between rounded-2xl border-2 border-border bg-card p-2">
             <button
+              type="button"
               onClick={() => setWorkers((w) => Math.max(1, w - 1))}
               className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
             >
@@ -221,6 +226,7 @@ function PostJobScreen() {
             </button>
             <span className="text-2xl font-bold text-foreground">{workers}</span>
             <button
+              type="button"
               onClick={() => setWorkers((w) => Math.min(10, w + 1))}
               className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
             >
@@ -230,10 +236,9 @@ function PostJobScreen() {
         </Field>
       </div>
 
-      {/* Submit */}
       <div className="fixed bottom-0 inset-x-0 mx-auto max-w-md p-5 bg-background border-t border-border">
         <Button
-          onClick={handleSubmit}
+          onClick={() => void handleSubmit()}
           disabled={loading}
           className="w-full h-14 rounded-2xl text-base font-semibold"
         >
@@ -277,6 +282,7 @@ function TypeCard({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
         "rounded-2xl border-2 p-4 text-left transition-colors",
