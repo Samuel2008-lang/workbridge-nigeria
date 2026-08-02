@@ -1,4 +1,4 @@
-project_id = "ozclkkblbiovgsddxpde"
+project_id = "obfpywmvnygwmfnlueay"
 
 [functions.flutterwave-webhook]
 verify_jwt = false

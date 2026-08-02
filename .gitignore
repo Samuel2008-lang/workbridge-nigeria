@@ -5,6 +5,7 @@
 .env.production
 .env*.local
 .env.*
+!.env.example
 
 # Logs
 logs

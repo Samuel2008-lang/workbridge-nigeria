@@ -4,6 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "postinstall": "node scripts/verify-deps.mjs",
     "dev": "vite dev",
     "build": "vite build && node scripts/generate-capacitor-index.mjs",
     "build:dev": "vite build --mode development",
@@ -13,7 +14,18 @@
     "cap:sync": "npx cap sync",
     "cap:open:android": "npx cap open android",
     "cap:android": "npm run build && npx cap sync android",
-    "android": "npm run cap:android && npx cap open android"
+    "android": "npm run cap:android && npx cap open android",
+    "verify:deps": "node scripts/verify-deps.mjs",
+    "supabase:check": "node scripts/check-supabase.mjs",
+    "supabase:apply": "node scripts/apply-supabase-schema.mjs",
+    "supabase:config": "node scripts/update-supabase-config.mjs",
+    "supabase:env": "node scripts/env-status.mjs"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "overrides": {
+    "unenv": "2.0.0-rc.24"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
@@ -92,6 +104,8 @@
     "prettier": "^3.7.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
+    "unenv": "2.0.0-rc.24",
+    "pg": "^8.16.3",
     "vite": "^7.3.1"
   }
 }
